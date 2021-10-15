@@ -15,10 +15,11 @@
     "spectrogram": []
   },
   "arch": {
-    "type": "BaselineModel",
+    "type": "SimpleLSTMModel",
     "args": {
       "n_feats": 128,
-      "fc_hidden": 512
+      "hidden_size": 128,
+      "n_layers": 3
     }
   },
   "data": {
