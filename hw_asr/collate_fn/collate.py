@@ -21,5 +21,7 @@ def collate_fn(batch_items: List[dict]):
     x = torch.nn.utils.rnn.pad_sequence(x, batch_first=True, padding_value=0.)
     y = torch.nn.utils.rnn.pad_sequence(y, batch_first=True)
     return {"spectrogram": x, "text_encoded": y, "spectrogram_length":
-            input_specs_lengths, "text_encoded_length": output_text_lengths,
-            "text": texts}
+            torch.tensor(input_specs_lengths, dtype=torch.int32),
+            "text_encoded_length": torch.tensor(output_text_lengths,
+                                                dtype=torch.int32), "text":
+            texts}

@@ -32,6 +32,9 @@ def main(config):
 
     # setup data_loader instances
     dataloaders = get_dataloaders(config, text_encoder)
+    if config["overfit_on_one_batch"] == "True":
+        dataloaders["train"] = [next(iter(dataloaders["train"]))]
+        dataloaders["val"] = [next(iter(dataloaders["val"]))]
 
     # build model architecture, then print to console
     model = config.init_obj(config["arch"], module_arch,

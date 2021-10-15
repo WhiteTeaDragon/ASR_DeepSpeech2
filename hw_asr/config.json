@@ -1,6 +1,7 @@
 {
   "name": "default_config",
   "n_gpu": 1,
+  "overfit_on_one_batch": "True",
   "preprocessing": {
     "sr": 16000,
     "spectrogram": {

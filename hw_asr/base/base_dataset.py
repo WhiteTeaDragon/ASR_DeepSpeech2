@@ -15,15 +15,15 @@ logger = logging.getLogger(__name__)
 
 class BaseDataset(Dataset):
     def __init__(
-            self,
-            index,
-            text_encoder: BaseTextEncoder,
-            config_parser: ConfigParser,
-            wave_augs=None,
-            spec_augs=None,
-            limit=None,
-            max_audio_length=None,
-            max_text_length=None,
+        self,
+        index,
+        text_encoder: BaseTextEncoder,
+        config_parser: ConfigParser,
+        wave_augs=None,
+        spec_augs=None,
+        limit=None,
+        max_audio_length=None,
+        max_text_length=None,
     ):
         self.text_encoder = text_encoder
         self.config_parser = config_parser
@@ -99,7 +99,7 @@ class BaseDataset(Dataset):
 
     @staticmethod
     def _filter_records_from_dataset(
-            index: list, max_audio_length, max_text_length, limit
+        index: list, max_audio_length, max_text_length, limit
     ) -> list:
         initial_size = len(index)
         if max_audio_length is not None:
