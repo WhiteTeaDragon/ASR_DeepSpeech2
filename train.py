@@ -60,6 +60,7 @@ def main(config):
                                 trainable_params)
     lr_scheduler = config.init_obj(config["lr_scheduler"],
                                    torch.optim.lr_scheduler, optimizer)
+    scheduler_frequency_of_update = config["lr_scheduler"]["frequency"]
 
     trainer = Trainer(
         model,
@@ -72,7 +73,8 @@ def main(config):
         data_loader=dataloaders["train"],
         valid_data_loader=dataloaders["val"],
         lr_scheduler=lr_scheduler,
-        len_epoch=config["trainer"].get("len_epoch", None)
+        len_epoch=config["trainer"].get("len_epoch", None),
+        scheduler_frequency_of_update=scheduler_frequency_of_update
     )
 
     trainer.train()

@@ -33,6 +33,7 @@ class Trainer(BaseTrainer):
             lr_scheduler=None,
             len_epoch=None,
             skip_oom=True,
+            scheduler_frequency_of_update=None
     ):
         super().__init__(model, criterion, metrics, optimizer, config, device)
         self.skip_oom = skip_oom
@@ -49,6 +50,7 @@ class Trainer(BaseTrainer):
         self.valid_data_loader = valid_data_loader
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
+        self.scheduler_frequency_of_update = scheduler_frequency_of_update
         self.log_step = 10
 
         self.train_metrics = MetricTracker(
@@ -120,6 +122,9 @@ class Trainer(BaseTrainer):
                 self._log_scalars(self.train_metrics)
             if batch_idx >= self.len_epoch:
                 break
+        if self.lr_scheduler is not None and \
+                self.scheduler_frequency_of_update == "epoch":
+            self.lr_scheduler.step()
         log = self.train_metrics.result()
 
         if self.do_validation:
@@ -147,7 +152,8 @@ class Trainer(BaseTrainer):
             batch["loss"].backward()
             self._clip_grad_norm()
             self.optimizer.step()
-            if self.lr_scheduler is not None:
+            if self.lr_scheduler is not None and \
+                    self.scheduler_frequency_of_update == "batch":
                 self.lr_scheduler.step()
 
         metrics.update("loss", batch["loss"].item())
