@@ -62,8 +62,9 @@ class BaseDataset(Dataset):
             "audio": audio_wave,
             "spectrogram": audio_spec,
             "duration": data_dict["audio_len"],
-            "text": data_dict["text"],
-            "text_encoded": self.text_encoder.encode(data_dict["text"]),
+            "text": data_dict["text"].replace("'", ""),
+            "text_encoded": self.text_encoder.encode(data_dict["text"].replace(
+                "'", "")),
             "audio_path": audio_path,
         }
 
