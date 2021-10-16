@@ -14,7 +14,12 @@ class SimpleLSTMModel(BaseModel):
                                 out_features=n_class)
 
     def forward(self, spectrogram, *args, **kwargs):
-        lstm_out, _ = self.LSTM(spectrogram)
+        packed_input = nn.utils.rnn.pack_padded_sequence(
+            spectrogram, kwargs["spectrogram_length"], batch_first=True,
+            enforce_sorted=False)
+        lstm_out, _ = self.LSTM(packed_input)
+        lstm_out, _ = nn.utils.rnn.pad_packed_sequence(lstm_out,
+                                                       batch_first=True)
         return {"logits": self.linear(lstm_out)}
 
     def transform_input_lengths(self, input_lengths):
