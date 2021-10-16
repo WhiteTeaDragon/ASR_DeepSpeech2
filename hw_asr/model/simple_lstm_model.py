@@ -4,12 +4,12 @@ from hw_asr.base import BaseModel
 
 
 class SimpleLSTMModel(BaseModel):
-    def __init__(self, n_feats, n_class, n_layers, hidden_size=512, *args,
-                 **kwargs):
+    def __init__(self, n_feats, n_class, n_layers, hidden_size=512,
+                 dropout=0.25, *args, **kwargs):
         super().__init__(n_feats, n_class, *args, **kwargs)
         self.LSTM = nn.LSTM(input_size=n_feats, hidden_size=hidden_size,
                                 num_layers=n_layers, batch_first=True,
-                                dropout=0.25, bidirectional=True)
+                                dropout=dropout, bidirectional=True)
         self.linear = nn.Linear(in_features=2 * hidden_size,
                                 out_features=n_class)
 
