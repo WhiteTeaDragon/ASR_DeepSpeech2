@@ -21,10 +21,13 @@ class CTCCharTextEncoder(CharTextEncoder):
         ans = []
         for i in range(len(inds)):
             curr_token = self.ind2char[inds[i]]
-            if (len(ans) == 0 or curr_token != ans[-1]) and curr_token != \
-                    self.EMPTY_TOK:
+            if len(ans) == 0 or curr_token != ans[-1]:
                 ans.append(curr_token)
-        return ''.join(ans)
+        ans_final = []
+        for i in range(len(ans)):
+            if ans[i] != self.EMPTY_TOK:
+                ans_final.append(ans[i])
+        return ''.join(ans_final)
 
     def ctc_beam_search(self, probs: torch.tensor, probs_length,
                         beam_size: int = 100) -> List[Tuple[str, float]]:

@@ -18,13 +18,13 @@
     "type": "SimpleLSTMModel",
     "args": {
       "n_feats": 128,
-      "hidden_size": 128,
-      "n_layers": 2
+      "hidden_size": 256,
+      "n_layers": 1
     }
   },
   "data": {
     "train": {
-      "batch_size": 20,
+      "batch_size": 1,
       "num_workers": 5,
       "datasets": [
         {
