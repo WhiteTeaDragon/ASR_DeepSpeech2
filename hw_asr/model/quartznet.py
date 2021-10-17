@@ -6,7 +6,7 @@ from hw_asr.base import BaseModel
 
 class SeparableConv1d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1,
-                 padding="same", bias=True):
+                 padding="same", bias=False):
         super(SeparableConv1d, self).__init__()
         self.depthwise = nn.Conv1d(in_channels, in_channels,
                                    kernel_size=kernel_size, groups=in_channels,
@@ -24,7 +24,7 @@ class QuartzModule(nn.Module):
     def __init__(self, c_in, c_out, kernel_size, relu=True, stride=1):
         super(QuartzModule, self).__init__()
         self.conv_layer = SeparableConv1d(c_in, c_out, kernel_size,
-                                          stride=stride, bias=True)
+                                          stride=stride, bias=False)
         self.normalization = nn.BatchNorm1d(c_out)
         self.relu = relu
         if self.relu:
@@ -42,7 +42,7 @@ class QuartzBlock(nn.Module):
     def __init__(self, num_of_repeats_inside_block, c_in, c_out, kernel_size):
         super(QuartzBlock, self).__init__()
         self.residual = nn.Sequential(
-            nn.Conv1d(c_in, c_out, kernel_size=1, bias=True),
+            nn.Conv1d(c_in, c_out, kernel_size=1, bias=False),
             nn.BatchNorm1d(c_out)
         )
         base_modules = []
