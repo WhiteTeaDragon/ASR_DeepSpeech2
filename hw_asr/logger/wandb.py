@@ -2,6 +2,7 @@ from datetime import datetime
 from .writer import Writer
 
 import numpy as np
+import wandb
 
 
 class WanDBWriter(Writer):
@@ -10,22 +11,16 @@ class WanDBWriter(Writer):
         self.writer = None
         self.selected_module = ""
 
-        try:
-            import wandb
-            wandb.login()
+        wandb.login()
 
-            if config['trainer'].get('wandb_project') is None:
-                raise ValueError("please specify project name for wandb")
+        if config['trainer'].get('wandb_project') is None:
+            raise ValueError("please specify project name for wandb")
 
-            wandb.init(
-                project=config['trainer'].get('wandb_project'),
-                config=config.config
-            )
-            self.wandb = wandb
-
-        except ImportError:
-            logger.warning(
-                "For use wandb install it via \n\t pip install wandb")
+        wandb.init(
+            project=config['trainer'].get('wandb_project'),
+            config=config.config
+        )
+        self.wandb = wandb
 
         self.step = 0
         self.mode = ""
