@@ -188,7 +188,7 @@ class Trainer(BaseTrainer):
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():
-            self.writer.add_histogram(name, p, bins="auto")
+            self.writer.add_histogram(name, p, bins="rice")
         return self.valid_metrics.result()
 
     def _progress(self, batch_idx):
