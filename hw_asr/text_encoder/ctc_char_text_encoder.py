@@ -1,5 +1,4 @@
 from typing import List, Tuple
-from transformers import TransfoXLTokenizer, TransfoXLLMHeadModel
 from tqdm import tqdm
 from collections import defaultdict
 
@@ -39,16 +38,29 @@ class CTCCharTextEncoder(CharTextEncoder):
                 new_paths[
                     (new_prefix, next_char)] += path_prob * next_char_prob
         res_dict = {}
-        for (new_prefix, _), value in new_paths.items():
-            inputs = self.tokenizer(new_prefix, return_tensors="pt")
-            outputs = self.model(**inputs, labels=inputs["input_ids"])
+        for (new_prefix, last_char), value in new_paths.items():
+            if len(new_prefix.split()) == 0:
+                res_dict[(new_prefix, last_char)] = value
+                continue
+            with torch.no_grad():
+                inputs = self.tokenizer.encode(new_prefix,
+                                               add_special_tokens=True)
+                # print(len(new_prefix), new_prefix)
+                # print(inputs, len(inputs))
+                inputs = torch.tensor([inputs])
+                outputs = self.model(inputs)
             logits = outputs.logits
+            # print(new_prefix)
+            # print(inputs, inputs["input_ids"].shape)
+            # print(outputs)
+            # print(logits)
             log_probs = torch.nn.functional.log_softmax(logits, dim=-1)
             target_log_probs = log_probs[:, :-1].gather(
                 2, inputs[:, 1:].unsqueeze(2)).squeeze(2)
             neural_lm_score = torch.sum(target_log_probs, dim=-1)
-            res_dict[new_prefix] = value + alpha * torch.exp(neural_lm_score) \
-                + beta * len(new_prefix)
+            res_dict[(new_prefix, last_char)] = value + alpha * torch.exp(
+                neural_lm_score).item() + beta * len(new_prefix)
+        print("Hse")
         return res_dict
 
     def ctc_decode(self, inds: List[int]) -> str:
@@ -74,11 +86,11 @@ class CTCCharTextEncoder(CharTextEncoder):
         char_length, voc_size = probs.shape
         assert voc_size == len(self.ind2char)
         if self.tokenizer is None:
-            self.tokenizer = TransfoXLTokenizer.from_pretrained('transfo-xl'
-                                                                '-wt103')
+            self.tokenizer = torch.hub.load('huggingface/transformers',
+            'tokenizer', 'transfo-xl-wt103')
         if self.model is None:
-            self.model = TransfoXLLMHeadModel.from_pretrained('transfo-xl'
-                                                              '-wt103')
+            self.model = torch.hub.load('huggingface/transformers',
+            'modelForCausalLM', 'transfo-xl-wt103')
         if self.device != device:
             self.device = device
             self.model = self.model.to(device)
