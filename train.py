@@ -61,7 +61,11 @@ def main(config):
     lr_scheduler = config.init_obj(config["lr_scheduler"],
                                    torch.optim.lr_scheduler, optimizer)
     scheduler_frequency_of_update = config["lr_scheduler"]["frequency"]
-    do_beam_search = bool(config["trainer"].get("beam_search", False))
+    do_beam_search = config["trainer"].get("beam_search", False)
+    if do_beam_search == "True"
+        do_beam_search = True
+    else:
+        do_beam_search = False
 
     trainer = Trainer(
         model,

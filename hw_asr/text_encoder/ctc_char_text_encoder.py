@@ -74,7 +74,6 @@ class CTCCharTextEncoder(CharTextEncoder):
             download_file("https://kaldi-asr.org/models/5/4gram_big.arpa.gz",
                           arch_path)
             shutil.unpack_archive(arch_path, self._data_dir, "gz")
-            os.remove(str(arch_path))
         decoder = build_ctcdecoder(list(self.char2ind.keys()),
                                    str(self.file_path),
                                    alpha=alpha,  # tuned on a val set
