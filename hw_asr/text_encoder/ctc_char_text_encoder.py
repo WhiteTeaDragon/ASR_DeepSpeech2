@@ -81,7 +81,8 @@ class CTCCharTextEncoder(CharTextEncoder):
                                    beta=beta,  # tuned on a val set
         )
         hypos = decoder.decode_beams(torch.cat((probs.cpu(),
-                                                torch.zeros(char_length)), 1), beam_size)
+                                                torch.zeros(char_length, 1)),
+                                               1), beam_size)
         for i in range(len(hypos)):
             hypos[i] = (hypos[0], hypos[-1])
         return sorted(hypos, key=lambda x: x[1], reverse=True)
