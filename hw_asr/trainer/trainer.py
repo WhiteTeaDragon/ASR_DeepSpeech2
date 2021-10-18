@@ -231,7 +231,7 @@ class Trainer(BaseTrainer):
                 ind = indices_to_log[i]
                 length = log_probs_length[ind]
                 beam_search_array.append(self.text_encoder.ctc_beam_search(
-                    log_probs[ind, :length])[0])
+                    log_probs[ind, :length])[0][0])
         tuples = list(zip(argmax_texts, text, argmax_texts_raw))
         to_log_pred = []
         to_log_pred_raw = []

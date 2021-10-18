@@ -20,7 +20,7 @@ class BaseMetric:
             for i in range(len(log_probs)):
                 ind_len = int(kwargs["log_probs_length"])
                 predictions.append(self.text_encoder.ctc_beam_search(
-                    log_probs[i, :ind_len])[0])
+                    log_probs[i, :ind_len])[0][0])
         else:
             if hasattr(self.text_encoder, "ctc_decode"):
                 predictions = [self.text_encoder.ctc_decode(inds.tolist()) for
