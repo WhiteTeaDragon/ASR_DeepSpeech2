@@ -61,6 +61,9 @@ def main(config):
     lr_scheduler = config.init_obj(config["lr_scheduler"],
                                    torch.optim.lr_scheduler, optimizer)
     scheduler_frequency_of_update = config["lr_scheduler"]["frequency"]
+    do_beam_search = config["trainer"].get("beam_search", False)
+    if do_beam_search == "True":
+        do_beam_search = True
 
     trainer = Trainer(
         model,
@@ -74,7 +77,8 @@ def main(config):
         valid_data_loader=dataloaders["val"],
         lr_scheduler=lr_scheduler,
         len_epoch=config["trainer"].get("len_epoch", None),
-        scheduler_frequency_of_update=scheduler_frequency_of_update
+        scheduler_frequency_of_update=scheduler_frequency_of_update,
+        beam_search=do_beam_search
     )
 
     trainer.train()

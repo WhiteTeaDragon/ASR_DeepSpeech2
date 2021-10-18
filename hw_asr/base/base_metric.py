@@ -15,12 +15,19 @@ class BaseMetric:
             inds[: int(ind_len)]
             for inds, ind_len in zip(argmax_inds, kwargs["log_probs_length"])
         ]
-        if hasattr(self.text_encoder, "ctc_decode"):
-            predictions = [self.text_encoder.ctc_decode(inds.tolist()) for
-                            inds in argmax_inds]
+        if kwargs["beam_search"]:
+            predictions = []
+            for i in range(len(log_probs)):
+                ind_len = int(kwargs["log_probs_length"])
+                predictions.append(self.text_encoder.ctc_beam_search(
+                    log_probs[i, :ind_len])[0])
         else:
-            predictions = [self.text_encoder.decode(inds.tolist()) for
-                            inds in argmax_inds]
+            if hasattr(self.text_encoder, "ctc_decode"):
+                predictions = [self.text_encoder.ctc_decode(inds.tolist()) for
+                               inds in argmax_inds]
+            else:
+                predictions = [self.text_encoder.decode(inds.tolist()) for
+                               inds in argmax_inds]
         ers = []
         for pred_text, target_text in zip(predictions, text):
             ers.append(self.metric_function(target_text, pred_text))

@@ -33,7 +33,8 @@ class Trainer(BaseTrainer):
             lr_scheduler=None,
             len_epoch=None,
             skip_oom=True,
-            scheduler_frequency_of_update=None
+            scheduler_frequency_of_update=None,
+            beam_search=False
     ):
         super().__init__(model, criterion, metrics, optimizer, config, device)
         self.skip_oom = skip_oom
@@ -51,6 +52,7 @@ class Trainer(BaseTrainer):
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
         self.scheduler_frequency_of_update = scheduler_frequency_of_update
+        self.beam_search = beam_search
         self.log_step = 10
 
         self.train_metrics = MetricTracker(
@@ -157,6 +159,7 @@ class Trainer(BaseTrainer):
                 self.lr_scheduler.step()
 
         metrics.update("loss", batch["loss"].item())
+        batch["beam_search"] = self.beam_search
         for met in self.metrics:
             metrics.update(met.name, met(**batch))
         return batch
@@ -210,7 +213,6 @@ class Trainer(BaseTrainer):
             *args,
             **kwargs,
     ):
-        # TODO: implement logging of beam search results
         if self.writer is None:
             return
         argmax_inds = log_probs.cpu().argmax(-1)
@@ -222,16 +224,31 @@ class Trainer(BaseTrainer):
                             argmax_inds]
         argmax_texts = [self.text_encoder.ctc_decode(inds.tolist()) for inds in
                         argmax_inds]
+        indices_to_log = torch.randperm(len(log_probs))[:examples_to_log]
+        beam_search_array = ["Not configured"] * examples_to_log
+        if self.beam_search:
+            for i in range(len(indices_to_log)):
+                ind = indices_to_log[i]
+                length = log_probs_length[ind]
+                beam_search_array.append(self.text_encoder.ctc_beam_search(
+                    log_probs[ind, :length])[0])
         tuples = list(zip(argmax_texts, text, argmax_texts_raw))
-        shuffle(tuples)
         to_log_pred = []
         to_log_pred_raw = []
-        for pred, target, raw_pred in tuples[:examples_to_log]:
+        for i in range(len(indices_to_log)):
+            pred, target, raw_pred = tuples[indices_to_log[i]]
+            beam_search_pred = beam_search_array[i]
             wer = calc_wer(target, pred) * 100
             cer = calc_cer(target, pred) * 100
+            addition = ""
+            if self.beam_search:
+                wer_bs = calc_wer(target, beam_search_pred) * 100
+                cer_bs = calc_cer(target, beam_search_pred) * 100
+                addition = f" | beam search: '{beam_search_pred}' | " \
+                           f"wer_bs: {wer_bs:.2f} | cer_bs: {cer_bs: .2f}"
             to_log_pred.append(
                 f"true: '{target}' | pred: '{pred}' "
-                f"| wer: {wer:.2f} | cer: {cer:.2f}"
+                f"| wer: {wer:.2f} | cer: {cer:.2f}" + addition
             )
             to_log_pred_raw.append(f"true: '{target}' | pred: '{raw_pred}'\n")
         self.writer.add_text(f"predictions",
