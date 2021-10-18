@@ -85,5 +85,5 @@ class CTCCharTextEncoder(CharTextEncoder):
                                                             1).detach()),
                                                1).numpy(), beam_size)
         for i in range(len(hypos)):
-            hypos[i] = (hypos[0], hypos[-1])
+            hypos[i] = (hypos[i][0], hypos[i][-1])
         return sorted(hypos, key=lambda x: x[1], reverse=True)
