@@ -73,10 +73,7 @@ class CTCCharTextEncoder(CharTextEncoder):
             download_file("https://kaldi-asr.org/models/5/4gram_big.arpa.gz",
                           self.arch_path)
             shutil.unpack_archive(self.arch_path, self._data_dir, "gz")
-            for fpath in (self._data_dir / "LM_model").iterdir():
-                shutil.move(str(fpath), str(self._data_dir / fpath.name))
             os.remove(str(self.arch_path))
-            shutil.rmtree(str(self._data_dir / "LM_model"))
         model = kenlm.Model(self.arch_path)
         decoder = build_ctcdecoder(list(self.char2ind.keys()), model,
             alpha=alpha,  # tuned on a val set
