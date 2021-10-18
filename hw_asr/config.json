@@ -18,7 +18,7 @@
     "type": "QuartzNet",
     "args": {
       "n_feats": 128,
-      "num_of_block_repeats": 3,
+      "num_of_block_repeats": 1,
       "num_of_repeats_inside_blocks": 5
     }
   },

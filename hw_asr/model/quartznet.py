@@ -8,6 +8,8 @@ class SeparableConv1d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1,
                  padding="same", bias=False):
         super(SeparableConv1d, self).__init__()
+        if stride > 1:
+            padding = 0
         self.depthwise = nn.Conv1d(in_channels, in_channels,
                                    kernel_size=kernel_size, groups=in_channels,
                                    bias=bias, padding=padding, stride=stride)
@@ -67,7 +69,7 @@ class QuartzNet(BaseModel):
     def __init__(self, n_feats, n_class, num_of_block_repeats,
                  num_of_repeats_inside_blocks, *args, **kwargs):
         super().__init__(n_feats, n_class, *args, **kwargs)
-        self.c1 = QuartzModule(n_feats, 256, 33, relu=True)
+        self.c1 = QuartzModule(n_feats, 256, 33, relu=True, stride=2)
         channels = [256, 256, 256, 512, 512, 512]
         kernel_sizes = [33, 39, 51, 63, 75]
         blocks = []
@@ -93,4 +95,4 @@ class QuartzNet(BaseModel):
         return {"logits": torch.transpose(x, 1, 2)}
 
     def transform_input_lengths(self, input_lengths):
-        return input_lengths  # we don't reduce time dimension here
+        return (input_lengths - 31) // 2
