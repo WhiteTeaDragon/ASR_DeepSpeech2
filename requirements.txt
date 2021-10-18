@@ -16,3 +16,4 @@ Pillow~=8.3.2
 wandb~=0.12.4
 pyctcdecode~=0.1.1
 transformers~=4.11.3
+pypi-kenlm
