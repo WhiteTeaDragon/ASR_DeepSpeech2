@@ -74,7 +74,7 @@ class CTCCharTextEncoder(CharTextEncoder):
                           self.arch_path)
             shutil.unpack_archive(self.arch_path, self._data_dir, "gz")
             os.remove(str(self.arch_path))
-        model = kenlm.Model(self.arch_path)
+        model = kenlm.Model(str(self.arch_path))
         decoder = build_ctcdecoder(list(self.char2ind.keys()), model,
             alpha=alpha,  # tuned on a val set
             beta=beta,  # tuned on a val set
