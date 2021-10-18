@@ -37,7 +37,7 @@ class CTCCharTextEncoder(CharTextEncoder):
         for text in alphabet:
             self.ind2char[max(self.ind2char.keys()) + 1] = text
         self.char2ind = {v: k for k, v in self.ind2char.items()}
-        self.arch_path = None
+        self.file_path = None
         data_dir = ROOT_PATH / "lm_model"
         data_dir.mkdir(exist_ok=True, parents=True)
         self._data_dir = data_dir
@@ -67,17 +67,18 @@ class CTCCharTextEncoder(CharTextEncoder):
         assert len(probs.shape) == 2
         char_length, voc_size = probs.shape
         assert voc_size == len(self.ind2char)
-        if self.arch_path is None:
-            self.arch_path = self._data_dir / "4gram_big.arpa.gz"
+        if self.file_path is None:
+            arch_path = self._data_dir / "4gram_big.arpa.gz"
+            self.file_path = self._data_dir / "4gram_big.arpa"
             print(f"Loading kenlm")
             download_file("https://kaldi-asr.org/models/5/4gram_big.arpa.gz",
-                          self.arch_path)
-            shutil.unpack_archive(self.arch_path, self._data_dir, "gz")
-            os.remove(str(self.arch_path))
-        model = kenlm.Model(str(self.arch_path))
-        decoder = build_ctcdecoder(list(self.char2ind.keys()), model,
-            alpha=alpha,  # tuned on a val set
-            beta=beta,  # tuned on a val set
+                          arch_path)
+            shutil.unpack_archive(arch_path, self._data_dir, "gz")
+            os.remove(str(arch_path))
+        decoder = build_ctcdecoder(list(self.char2ind.keys()),
+                                   str(self.file_path),
+                                   alpha=alpha,  # tuned on a val set
+                                   beta=beta,  # tuned on a val set
         )
         hypos = decoder.decode_beams(probs, beam_size)
         for i in range(len(hypos)):
