@@ -18,7 +18,7 @@ class BaseMetric:
         if kwargs["beam_search"]:
             predictions = []
             for i in range(len(log_probs)):
-                ind_len = int(kwargs["log_probs_length"])
+                ind_len = int(kwargs["log_probs_length"][i])
                 predictions.append(self.text_encoder.ctc_beam_search(
                     log_probs[i, :ind_len])[0][0])
         else:
