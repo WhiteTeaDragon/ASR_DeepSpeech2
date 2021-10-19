@@ -86,9 +86,10 @@ class BaseDataset(Dataset):
         return audio_tensor
 
     def process_wave(self, audio_tensor_wave: Tensor):
+        sr = self.config_parser["preprocessing"]["sr"]
         with torch.no_grad():
             if self.wave_augs is not None:
-                audio_tensor_wave = self.wave_augs(audio_tensor_wave)
+                audio_tensor_wave = self.wave_augs(audio_tensor_wave, sr)
             wave2spec = self.config_parser.init_obj(
                 self.config_parser["preprocessing"]["spectrogram"],
                 torchaudio.transforms,

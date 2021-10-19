@@ -1,5 +1,4 @@
 import random
-from random import shuffle
 
 import PIL
 import torch
@@ -122,6 +121,7 @@ class Trainer(BaseTrainer):
                 self._log_predictions(part="train", **batch)
                 self._log_spectrogram(batch["spectrogram"])
                 self._log_scalars(self.train_metrics)
+                self._log_audio(batch["audio"], "train")
             if batch_idx >= self.len_epoch:
                 break
         if self.lr_scheduler is not None and \
@@ -188,6 +188,7 @@ class Trainer(BaseTrainer):
             self._log_scalars(self.valid_metrics)
             self._log_predictions(part="val", **batch)
             self._log_spectrogram(batch["spectrogram"])
+            self._log_audio(batch["audio"], part="val")
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():
@@ -284,3 +285,7 @@ class Trainer(BaseTrainer):
         for metric_name in metric_tracker.keys():
             self.writer.add_scalar(f"{metric_name}",
                                    metric_tracker.avg(metric_name))
+
+    def _log_audio(self, audio_batch, part):
+        audio = random.choice(audio_batch)
+        self.writer.add_audio("audio_" + part, audio)

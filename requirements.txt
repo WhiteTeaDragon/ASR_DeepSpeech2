@@ -17,3 +17,5 @@ wandb~=0.12.4
 pyctcdecode~=0.1.1
 transformers~=4.11.3
 pypi-kenlm
+
+librosa~=0.8.1

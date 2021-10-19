@@ -3,7 +3,6 @@ from speechbrain.utils.data_utils import download_file
 from pyctcdecode import build_ctcdecoder
 
 import torch
-import kenlm
 import shutil
 import os
 import gzip
@@ -14,7 +13,7 @@ from hw_asr.utils import ROOT_PATH
 
 
 def gunzip_something(gzipped_file_name, work_dir):
-    "gunzip the given gzipped file"
+    """gunzip the given gzipped file"""
 
     # see warning about filename
     filename = os.path.split(gzipped_file_name)[-1]
@@ -68,11 +67,11 @@ class CTCCharTextEncoder(CharTextEncoder):
         char_length, voc_size = probs.shape
         assert voc_size == len(self.ind2char)
         if self.file_path is None:
-            arch_path = self._data_dir / "4gram_big.arpa.gz"
-            self.file_path = self._data_dir / "4gram_big.arpa"
+            arch_path = self._data_dir / "3-gram.pruned.1e-7.arpa.gz"
+            self.file_path = self._data_dir / "3-gram.pruned.1e-7.arpa"
             print(f"Loading kenlm")
-            download_file("https://kaldi-asr.org/models/5/4gram_big.arpa.gz",
-                          arch_path)
+            download_file("http://www.openslr.org/resources/11/3-gram.pruned"
+                          ".1e-7.arpa.gz", arch_path)
             shutil.unpack_archive(arch_path, self._data_dir, "gz")
         decoder = build_ctcdecoder(list(self.char2ind.keys()),
                                    str(self.file_path),
