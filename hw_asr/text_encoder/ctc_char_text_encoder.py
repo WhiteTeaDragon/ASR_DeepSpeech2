@@ -43,6 +43,7 @@ class CTCCharTextEncoder(CharTextEncoder):
         shutil.register_unpack_format('gz',
                                       ['.gz', ],
                                       gunzip_something)
+        self.decoder = None
 
     def ctc_decode(self, inds: List[int]) -> str:
         ans = []
@@ -73,12 +74,13 @@ class CTCCharTextEncoder(CharTextEncoder):
             download_file("http://www.openslr.org/resources/11/3-gram.pruned"
                           ".1e-7.arpa.gz", arch_path)
             shutil.unpack_archive(arch_path, self._data_dir, "gz")
-        decoder = build_ctcdecoder(list(self.char2ind.keys()),
+        if self.decoder is None:
+            self.decoder = build_ctcdecoder(list(self.char2ind.keys()),
                                    str(self.file_path),
                                    alpha=alpha,  # tuned on a val set
                                    beta=beta,  # tuned on a val set
-        )
-        hypos = decoder.decode_beams(torch.cat((probs.detach().cpu(),
+            )
+        hypos = self.decoder.decode_beams(torch.cat((probs.detach().cpu(),
                                                 torch.zeros(char_length,
                                                             1).detach()),
                                                1).numpy(), beam_size)
