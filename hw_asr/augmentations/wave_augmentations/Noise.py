@@ -25,4 +25,4 @@ class Noise(AugmentationBase):
 
     def __call__(self, data: Tensor, sample_rate):
         x = data.unsqueeze(1)
-        return self._aug(x).squeeze(1), sample_rate
+        return self._aug(x, sample_rate).squeeze(1), sample_rate
