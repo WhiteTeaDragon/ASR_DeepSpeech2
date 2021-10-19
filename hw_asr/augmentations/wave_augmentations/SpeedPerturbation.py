@@ -12,9 +12,13 @@ class SpeedPerturbation(AugmentationBase):
         self.speed_max = speed_max
 
     def __call__(self, data: Tensor, sample_rate):
-        if random.random() > 0.5:
-            new_sample_rate = int(self.speed_max * sample_rate)
-        else:
-            new_sample_rate = int(self.speed_min * sample_rate)
-        x = torchaudio.functional.resample(data, sample_rate, new_sample_rate)
-        return x, new_sample_rate
+        new_speed = self.speed_max
+        if random.random() < 0.5:
+            new_speed = self.speed_min
+        effects = [
+            ["speed", str(new_speed)],  # reduce the speed
+            ["rate", f"{sample_rate}"],
+        ]
+        x, sample_rate = torchaudio.sox_effects.apply_effects_tensor(
+            data, sample_rate, effects)
+        return x, sample_rate

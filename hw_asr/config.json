@@ -11,7 +11,7 @@
     }
   },
   "augmentations": {
-    "p": 0.5,
+    "p": 1,
     "wave": [
       {
         "type": "Gain",
@@ -23,7 +23,8 @@
       {
         "type": "Noise",
         "args": {
-          "noise_url":  "https://zenodo.org/record/2529934/files/FSDnoisy18k.audio_test.zip"
+          "noise_url":  "https://zenodo.org/record/2529934/files/FSDnoisy18k.audio_test.zip",
+          "noise_level": 1
         }
       }, {"type": "SpeedPerturbation",
         "args": {"speed_min": 0.9, "speed_max": 1.1}}
