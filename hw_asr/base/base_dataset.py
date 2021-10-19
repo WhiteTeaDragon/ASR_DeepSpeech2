@@ -98,7 +98,7 @@ class BaseDataset(Dataset):
             audio_tensor_spec = wave2spec(audio_tensor_wave)
             if self.spec_augs is not None:
                 audio_tensor_spec, sr = self.spec_augs(
-                    audio_tensor_spec)
+                    audio_tensor_spec, sr)
             return audio_tensor_wave, audio_tensor_spec, sr
 
     @staticmethod
