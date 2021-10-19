@@ -57,8 +57,8 @@ class CTCCharTextEncoder(CharTextEncoder):
                 ans_final.append(ans[i])
         return ''.join(ans_final)
 
-    def ctc_beam_search(self, probs: torch.tensor, alpha=0.5, beta=1,
-                        beam_size: int = 100, device=None) -> \
+    def ctc_beam_search(self, probs: torch.tensor, beam_size: int = 100,
+                        alpha=0.5, beta=1, device=None) -> \
             List[Tuple[str, float]]:
         """
         Performs beam search and returns a list of pairs (hypothesis,
