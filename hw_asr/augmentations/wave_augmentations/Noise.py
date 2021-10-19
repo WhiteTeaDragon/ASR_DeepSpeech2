@@ -35,7 +35,7 @@ class Noise(AugmentationBase):
         noise, _ = torchaudio.load(curr_file)
         noise = noise[0:1, :]
         _, len_noise = noise.shape
-        noise_energy = torch.norm(torch.from_numpy(noise))
+        noise_energy = torch.norm(noise)
         audio_energy = torch.norm(data)
 
         alpha = (audio_energy / noise_energy) * math.pow(
