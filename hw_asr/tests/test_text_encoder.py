@@ -15,10 +15,16 @@ class TestTextEncoder(unittest.TestCase):
         self.assertIn(decoded_text, true_text)
 
     def test_beam_search(self):
-        vocab = list("ab-")
-        probs = [[[0.2, 0, 0.8],
-                 [0.4, 0, 0.6]]]  # (batch_size, timestamps, vocab_size)
+        vocab = list("a ")
+        probs = torch.tensor([[0.8, 0.2, 0],
+                 [0.6, 0.4, 0]])  # (timestamps, vocab_size)
         text_encoder = CTCCharTextEncoder(vocab)
-        res = text_encoder.ctc_beam_search(probs, [2], 2)
-        true_res = [("a", 0.52), ("", 0.48)]
-        self.assertListEqual(res, true_res)
+        res = text_encoder.ctc_beam_search(probs, beam_size=2, alpha=0, beta=0,
+                                           use_lm=False)
+        true_res = [("", 0.48), ("a", 0.40)]
+        print(res)
+        print(true_res)
+        self.assertEqual(len(true_res), len(res))
+        for i in range(len(true_res)):
+            self.assertEqual(true_res[i][0], res[i][0])
+            self.assertAlmostEqual(true_res[i][1], res[i][1])

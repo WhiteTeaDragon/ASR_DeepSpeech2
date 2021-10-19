@@ -7,6 +7,8 @@ import shutil
 import os
 import gzip
 import re
+import math
+import numpy as np
 
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
 from hw_asr.utils import ROOT_PATH
@@ -58,7 +60,7 @@ class CTCCharTextEncoder(CharTextEncoder):
         return ''.join(ans_final)
 
     def ctc_beam_search(self, probs: torch.tensor, beam_size: int = 100,
-                        alpha=0.5, beta=1, device=None) -> \
+                        alpha=0.5, beta=1, use_lm=True) -> \
             List[Tuple[str, float]]:
         """
         Performs beam search and returns a list of pairs (hypothesis,
@@ -67,23 +69,40 @@ class CTCCharTextEncoder(CharTextEncoder):
         assert len(probs.shape) == 2
         char_length, voc_size = probs.shape
         assert voc_size == len(self.ind2char)
-        if self.file_path is None:
+        if self.file_path is None and use_lm:
             arch_path = self._data_dir / "3-gram.pruned.1e-7.arpa.gz"
             self.file_path = self._data_dir / "3-gram.pruned.1e-7.arpa"
             print(f"Loading kenlm")
             download_file("http://www.openslr.org/resources/11/3-gram.pruned"
                           ".1e-7.arpa.gz", arch_path)
             shutil.unpack_archive(arch_path, self._data_dir, "gz")
-        if self.decoder is None:
-            self.decoder = build_ctcdecoder(list(self.char2ind.keys()),
+        if self.decoder is None and use_lm:
+            vocab = list(self.ind2char.values())
+            vocab[0] = ""
+            print(vocab)
+            self.decoder = build_ctcdecoder(vocab,
                                    str(self.file_path),
                                    alpha=alpha,  # tuned on a val set
                                    beta=beta,  # tuned on a val set
             )
-        hypos = self.decoder.decode_beams(torch.cat((probs.detach().cpu(),
-                                                torch.zeros(char_length,
-                                                            1).detach()),
-                                               1).numpy(), beam_size)
+        curr_decoder = self.decoder
+        if not use_lm:
+            vocab = list(self.ind2char.values())
+            vocab[0] = ""
+            decoder = build_ctcdecoder(vocab, None,
+                                            alpha=alpha,  # tuned on a val set
+                                            beta=beta)  # tuned on a val set
+            curr_decoder = decoder
+        # hypos = self.decoder.decode_beams(torch.cat((probs.detach().cpu(),
+        #                                         torch.zeros(char_length,
+        #                                                     1).detach()),
+        #                                        1).numpy(), beam_size)
+        log_probs = np.log(np.clip(probs.detach().cpu().numpy(),
+                                   1e-15, 1))
+        hypos = curr_decoder.decode_beams(log_probs,
+                                          beam_size, token_min_logp=-10000,
+                                          beam_prune_logp=-10000,
+                                          hotword_weight=0)
         for i in range(len(hypos)):
-            hypos[i] = (hypos[i][0], hypos[i][-1])
+            hypos[i] = (hypos[i][0], math.exp(hypos[i][-1]))
         return sorted(hypos, key=lambda x: x[1], reverse=True)
