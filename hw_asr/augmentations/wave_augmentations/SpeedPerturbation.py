@@ -10,6 +10,6 @@ class SpeedPerturbation(AugmentationBase):
         self.speed_x = speed_x
 
     def __call__(self, data: Tensor, sample_rate):
-        new_sample_rate = self.speed_x * sample_rate
+        new_sample_rate = int(self.speed_x * sample_rate)
         x = torchaudio.functional.resample(data, sample_rate, new_sample_rate)
         return x, new_sample_rate
