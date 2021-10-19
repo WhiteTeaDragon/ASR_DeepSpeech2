@@ -27,13 +27,14 @@ def from_configs(configs: ConfigParser):
                                  hw_asr.augmentations.spectrogram_augmentations
                                  )
             )
-    return _to_function(wave_augs), _to_function(spec_augs)
+    return _to_function(wave_augs, configs), _to_function(spec_augs, configs)
 
 
-def _to_function(augs_list: List[Callable]):
+def _to_function(augs_list: List[Callable], configs):
     if len(augs_list) == 0:
         return None
     elif len(augs_list) == 1:
         return augs_list[0]
     else:
-        return RandomApply(SequentialAugmentation(augs_list), 0.5)
+        p = int(configs.config["augmentations"]["p"])
+        return RandomApply(SequentialAugmentation(augs_list), p)
