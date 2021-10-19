@@ -26,7 +26,8 @@
         }
       }, {"type": "SpeedPerturbation", "args": {"speed_x": 0.9}
       }, {"type": "SpeedPerturbation", "args": {"speed_x": 1.1}}],
-    "spectrogram": [{"type": "Cutout"}, {"type": "RandomErasing"}]
+    "spectrogram": [{"type": "Cutout", "args": {}},
+      {"type": "RandomErasing", "args": {}}]
   },
   "arch": {
     "type": "QuartzNet",

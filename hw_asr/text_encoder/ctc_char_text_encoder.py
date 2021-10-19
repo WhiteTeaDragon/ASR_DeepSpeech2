@@ -79,7 +79,6 @@ class CTCCharTextEncoder(CharTextEncoder):
         if self.decoder is None and use_lm:
             vocab = list(self.ind2char.values())
             vocab[0] = ""
-            print(vocab)
             self.decoder = build_ctcdecoder(vocab,
                                    str(self.file_path),
                                    alpha=alpha,  # tuned on a val set
