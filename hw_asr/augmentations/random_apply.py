@@ -10,8 +10,8 @@ class RandomApply:
         self.augmentation = augmentation
         self.p = p
 
-    def __call__(self, data: Tensor) -> Tensor:
+    def __call__(self, data: Tensor, sample_rate):
         if random.random() < self.p:
-            return self.augmentation(data)
+            return self.augmentation(data), sample_rate
         else:
-            return data
+            return data, sample_rate

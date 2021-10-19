@@ -121,7 +121,7 @@ class Trainer(BaseTrainer):
                 self._log_predictions(part="train", **batch)
                 self._log_spectrogram(batch["spectrogram"])
                 self._log_scalars(self.train_metrics)
-                self._log_audio(batch["audio"], "train")
+                self._log_audio(batch["audio"], batch["sample_rate"], "train")
             if batch_idx >= self.len_epoch:
                 break
         if self.lr_scheduler is not None and \
@@ -188,7 +188,7 @@ class Trainer(BaseTrainer):
             self._log_scalars(self.valid_metrics)
             self._log_predictions(part="val", **batch)
             self._log_spectrogram(batch["spectrogram"])
-            self._log_audio(batch["audio"], part="val")
+            self._log_audio(batch["audio"], batch["sample_rate"], part="val")
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():
@@ -286,6 +286,8 @@ class Trainer(BaseTrainer):
             self.writer.add_scalar(f"{metric_name}",
                                    metric_tracker.avg(metric_name))
 
-    def _log_audio(self, audio_batch, part):
-        audio = random.choice(audio_batch)
-        self.writer.add_audio("audio_" + part, audio)
+    def _log_audio(self, audio_batch, sample_rates, part):
+        index = random.choice(range(len(audio_batch)))
+        audio = audio_batch[index]
+        sample_rate = sample_rates[index]
+        self.writer.add_audio("audio_" + part, audio, sample_rate)

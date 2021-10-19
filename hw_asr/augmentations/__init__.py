@@ -4,6 +4,7 @@ from typing import List
 import hw_asr.augmentations.spectrogram_augmentations
 import hw_asr.augmentations.wave_augmentations
 from hw_asr.augmentations.sequential import SequentialAugmentation
+from hw_asr.augmentations.random_apply import RandomApply
 from hw_asr.utils.parse_config import ConfigParser
 
 
@@ -35,4 +36,4 @@ def _to_function(augs_list: List[Callable]):
     elif len(augs_list) == 1:
         return augs_list[0]
     else:
-        return SequentialAugmentation(augs_list)
+        return RandomApply(SequentialAugmentation(augs_list), 0.5)

@@ -10,4 +10,4 @@ class Gain(AugmentationBase):
 
     def __call__(self, data: Tensor, sample_rate):
         x = data.unsqueeze(1)
-        return self._aug(x).squeeze(1)
+        return self._aug(x).squeeze(1), sample_rate

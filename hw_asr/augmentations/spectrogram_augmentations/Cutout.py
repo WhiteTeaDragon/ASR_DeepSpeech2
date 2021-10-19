@@ -13,4 +13,4 @@ class Cutout(AugmentationBase):
         )
 
     def __call__(self, data: Tensor, sample_rate):
-        return self.aug(data)
+        return self.aug(data), sample_rate

@@ -9,4 +9,4 @@ class RandomErasing(AugmentationBase):
         self._aug = torchvision.transforms.RandomErasing(*args, **kwargs)
 
     def __call__(self, data: Tensor, sample_rate):
-        return self._aug(data)
+        return self._aug(data), sample_rate

@@ -9,8 +9,8 @@ class SequentialAugmentation(AugmentationBase):
     def __init__(self, augmentation_list: List[Callable]):
         self.augmentation_list = augmentation_list
 
-    def __call__(self, data: Tensor) -> Tensor:
+    def __call__(self, data: Tensor, sample_rate):
         x = data
         for augmentation in self.augmentation_list:
-            x = augmentation(data)
-        return x
+            x, sample_rate = augmentation(x, sample_rate)
+        return x, sample_rate
