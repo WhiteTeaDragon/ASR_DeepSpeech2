@@ -1,5 +1,8 @@
-import torch_audiomentations
 import shutil
+import random
+import torchaudio
+import torch
+import math
 
 from torch import Tensor
 from speechbrain.utils.data_utils import download_file
@@ -11,18 +14,39 @@ from hw_asr.utils import ROOT_PATH
 
 
 class Noise(AugmentationBase):
-    def __init__(self, noise_url):
+    def __init__(self, noise_url, noise_level=20):
         data_dir = ROOT_PATH / "data" / "noise"
         data_dir.mkdir(exist_ok=True, parents=True)
         arch_path = data_dir / "FSDnoisy18k.audio_test.zip"
         print(f"Loading noise")
         download_file(noise_url, arch_path)
         shutil.unpack_archive(arch_path, data_dir)
+        self.file_paths = []
         for fpath in (data_dir / "FSDnoisy18k.audio_test").iterdir():
-            shutil.move(str(fpath), str(data_dir / fpath.name))
+            filename = str(data_dir / fpath.name)
+            shutil.move(str(fpath), filename)
+            self.file_paths.append(filename)
         shutil.rmtree(str(data_dir / "FSDnoisy18k.audio_test"))
-        self._aug = torch_audiomentations.AddBackgroundNoise(str(data_dir))
+        self.noise_level = noise_level
 
     def __call__(self, data: Tensor, sample_rate):
-        x = data.unsqueeze(1)
-        return self._aug(x, sample_rate).squeeze(1), sample_rate
+        _, len_audio = data.shape
+        curr_file = random.choice(self.file_paths)
+        noise, _ = torchaudio.load(curr_file)
+        noise = noise[0:1, :]
+        _, len_noise = noise.shape
+        noise_energy = torch.norm(torch.from_numpy(noise))
+        audio_energy = torch.norm(data)
+
+        alpha = (audio_energy / noise_energy) * math.pow(
+            10, -self.noise_level / 20)
+        if len_noise > len_audio:
+            noise = noise[:, :len_audio]
+        else:
+            times = (len_audio + len_noise - 1) // len_noise
+            noise = noise.repeat(1, times)[:, :len_audio]
+
+        augmented_wav = data + alpha * noise
+
+        augmented_wav = torch.clamp(augmented_wav, -1, 1)
+        return augmented_wav, sample_rate
