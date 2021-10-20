@@ -32,7 +32,7 @@ class LJDataset(BaseDataset):
         for entry in index:
             new_entry = {"audio_len": librosa.get_duration(
                 filename=entry["file"]),
-                         "path": entry["path"],
+                         "path": entry["file"],
                          "text": entry["text"].lower()}
             new_index.append(new_entry)
             print(new_entry["text"], file=all_txt_file)
