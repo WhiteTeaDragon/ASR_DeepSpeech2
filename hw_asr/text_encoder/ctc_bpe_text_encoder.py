@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Union
 from torch import Tensor
 
 import youtokentome as yttm
+import numpy as np
 
 from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 
@@ -12,6 +13,12 @@ class CTCBPETextEncoder(CTCCharTextEncoder):
         self.bpe_object = bpe_object
         super().__init__(self.bpe_object.vocab())
         self.vocab = self.bpe_object.vocab()
+
+    def decode(self, vector: Union[Tensor, np.ndarray, List[int]]):
+        res = self.bpe_object.decode(vector)
+        if len(res) == 0:
+            return ""
+        return res[0]
 
     def encode(self, text) -> Tensor:
         return Tensor(
