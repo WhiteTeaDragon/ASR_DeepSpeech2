@@ -48,11 +48,11 @@
     "all": {
       "batch_size": 20,
       "num_workers": 5,
+      "test_share": 0.2,
       "datasets": [
         {
           "type": "LJDataset",
           "args": {
-            "test_share": 0.2,
             "max_audio_length": 20.0,
             "max_text_length": 200
           }
