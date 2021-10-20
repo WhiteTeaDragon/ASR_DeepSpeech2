@@ -27,7 +27,10 @@ class CTCBPETextEncoder(CTCCharTextEncoder):
         for i in range(len(ans)):
             if ans[i] != 0:
                 ans_final.append(ans[i])
-        return self.bpe_object.decode(ans_final)[0]
+        res = self.bpe_object.decode(ans_final)
+        if len(res) == 0:
+            return ""
+        return res[0]
 
     def __len__(self):
         return len(self.vocab)
