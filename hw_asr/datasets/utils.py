@@ -26,7 +26,7 @@ def get_dataloaders(configs: ConfigParser):
     bpe_vocab_size = int(configs["bpe_vocab_size"])
     config_params = list(configs["data"].items())
     for i in range(len(config_params)):
-        assert config_params[0] in ("train", "val", "test"), "Data types " \
+        assert config_params[i][0] in ("train", "val", "test"), "Data types " \
                                                              "must be one " \
                                                              "of train, " \
                                                              "val, test"
