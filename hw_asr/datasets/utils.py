@@ -61,7 +61,16 @@ def get_dataloaders(configs: ConfigParser):
             yttm.BPE.train(data=all_txt_file_path, vocab_size=bpe_vocab_size,
                            model=model_path)
             bpe = yttm.BPE(model=model_path)
-            train_text_encoder = CTCCharTextEncoder(bpe.vocab())
+            alphabet = bpe.vocab()
+            for i in range(len(alphabet)):
+                new_symbol = []
+                for j in range(len(alphabet[i])):
+                    if alphabet[i][j] != "_":
+                        new_symbol.append(alphabet[i][j])
+                    else:
+                        new_symbol.append(" ")
+                alphabet[i] = ''.join(new_symbol)
+            train_text_encoder = CTCCharTextEncoder(alphabet)
         if train_text_encoder is not None:
             for i in range(len(datasets)):
                 datasets[i].set_text_encoder(train_text_encoder)
