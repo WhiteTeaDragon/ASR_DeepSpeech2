@@ -63,7 +63,7 @@ def get_dataloaders(configs: ConfigParser):
             params = config_params[i][1]
             num_workers = params.get("num_workers", 1)
             wave_augs, spec_augs = hw_asr.augmentations.from_configs(configs)
-            dataset = configs.init_obj(params["datasets"],
+            dataset = configs.init_obj(params["datasets"][0],
                                        hw_asr.datasets, config_parser=configs,
                                        wave_augs=wave_augs,
                                        spec_augs=spec_augs)
