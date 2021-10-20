@@ -19,3 +19,4 @@ transformers~=4.11.3
 pypi-kenlm
 
 librosa~=0.8.1
+youtokentome~=1.0.3

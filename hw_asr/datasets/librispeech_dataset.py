@@ -9,7 +9,6 @@ from speechbrain.utils.data_utils import download_file
 from tqdm import tqdm
 
 from hw_asr.base.base_dataset import BaseDataset
-from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 from hw_asr.utils import ROOT_PATH
 from hw_asr.utils.parse_config import ConfigParser
 
@@ -30,13 +29,15 @@ URL_LINKS = {
 
 
 class LibrispeechDataset(BaseDataset):
-    def __init__(self, part, data_dir=None, *args, **kwargs):
+    def __init__(self, part, data_dir=None, *args,
+                 **kwargs):
         assert part in URL_LINKS or part == 'train_all'
 
         if data_dir is None:
             data_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
             data_dir.mkdir(exist_ok=True, parents=True)
         self._data_dir = data_dir
+        self.all_text_txt_file_path = None
         if part == 'train_all':
             index = sum([self._get_or_load_index(part)
                          for part in URL_LINKS if 'train' in part], [])
@@ -64,6 +65,8 @@ class LibrispeechDataset(BaseDataset):
             index = self._create_index(part)
             with index_path.open("w") as f:
                 json.dump(index, f, indent=2)
+        self.all_text_txt_file_path = str(self._data_dir / part /
+                                          "all_txt_file.txt")
         return index
 
     def _create_index(self, part):
@@ -76,6 +79,7 @@ class LibrispeechDataset(BaseDataset):
         for dirpath, dirnames, filenames in os.walk(str(split_dir)):
             if any([f.endswith(".flac") for f in filenames]):
                 flac_dirs.add(dirpath)
+        all_txt_file = open(str(split_dir / "all_txt_file.txt"), "w")
         for flac_dir in tqdm(
                 list(flac_dirs), desc=f"Preparing librispeech folders: {part}"
         ):
@@ -95,15 +99,16 @@ class LibrispeechDataset(BaseDataset):
                             "audio_len": length,
                         }
                     )
+                    print(f_text.lower(), file=all_txt_file)
+        all_txt_file.close()
         return index
 
 
 if __name__ == "__main__":
-    text_encoder = CTCCharTextEncoder.get_simple_alphabet()
     config_parser = ConfigParser.get_default_configs()
 
     ds = LibrispeechDataset(
-        "dev-clean", text_encoder=text_encoder, config_parser=config_parser
+        "dev-clean", config_parser=config_parser
     )
     item = ds[0]
     print(item)

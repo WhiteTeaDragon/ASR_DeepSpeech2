@@ -19,11 +19,8 @@ DEFAULT_CHECKPOINT_PATH = ROOT_PATH / "default_test_model" / "checkpoint.pth"
 def main(config, out_file):
     logger = config.get_logger("test")
 
-    # text_encoder
-    text_encoder = CTCCharTextEncoder.get_simple_alphabet()
-
     # setup data_loader instances
-    dataloaders = get_dataloaders(config, text_encoder)
+    dataloaders, text_encoder = get_dataloaders(config)
 
     # build model architecture
     model = config.init_obj(config["arch"], module_model,

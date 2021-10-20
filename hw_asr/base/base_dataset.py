@@ -9,6 +9,7 @@ from torch.utils.data import Dataset
 
 from hw_asr.base.base_text_encoder import BaseTextEncoder
 from hw_asr.utils.parse_config import ConfigParser
+from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,6 @@ class BaseDataset(Dataset):
     def __init__(
         self,
         index,
-        text_encoder: BaseTextEncoder,
         config_parser: ConfigParser,
         wave_augs=None,
         spec_augs=None,
@@ -25,7 +25,7 @@ class BaseDataset(Dataset):
         max_audio_length=None,
         max_text_length=None,
     ):
-        self.text_encoder = text_encoder
+        self.text_encoder = CTCCharTextEncoder.get_simple_alphabet()
         self.config_parser = config_parser
         self.wave_augs = wave_augs
         self.spec_augs = spec_augs
@@ -147,3 +147,6 @@ class BaseDataset(Dataset):
             random.shuffle(index)
             index = index[:limit]
         return index
+
+    def set_text_encoder(self, text_encoder):
+        self.text_encoder = text_encoder

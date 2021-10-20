@@ -36,5 +36,5 @@ def _to_function(augs_list: List[Callable], configs):
     elif len(augs_list) == 1:
         return augs_list[0]
     else:
-        p = int(configs.config["augmentations"]["p"])
+        p = float(configs.config["augmentations"]["p"])
         return RandomApply(SequentialAugmentation(augs_list), p)
