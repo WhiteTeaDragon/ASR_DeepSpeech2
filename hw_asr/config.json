@@ -2,7 +2,10 @@
   "name": "default_config",
   "n_gpu": 1,
   "overfit_on_one_batch": "True",
-  "bpe_vocab_size": 100,
+  "bpe": {
+    "vocab_size": 100,
+    "model_file": 0
+  },
   "preprocessing": {
     "sr": 16000,
     "spectrogram": {

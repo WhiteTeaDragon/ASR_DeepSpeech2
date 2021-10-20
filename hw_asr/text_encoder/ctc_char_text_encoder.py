@@ -27,6 +27,9 @@ class CTCCharTextEncoder(CharTextEncoder):
         data_dir.mkdir(exist_ok=True, parents=True)
         self._data_dir = data_dir
         self.decoder = None
+        vocab = list(self.ind2char.values())
+        vocab[0] = ""
+        self.vocab = vocab
 
     def ctc_decode(self, inds: List[int]) -> str:
         ans = []
@@ -58,18 +61,14 @@ class CTCCharTextEncoder(CharTextEncoder):
                           ".1e-7.arpa.gz", arch_path)
             shutil.unpack_archive(arch_path, self._data_dir, "gz")
         if self.decoder is None and use_lm:
-            vocab = list(self.ind2char.values())
-            vocab[0] = ""
-            self.decoder = build_ctcdecoder(vocab,
+            self.decoder = build_ctcdecoder(self.vocab,
                                    str(self.file_path),
                                    alpha=alpha,  # tuned on a val set
                                    beta=beta,  # tuned on a val set
             )
         curr_decoder = self.decoder
         if not use_lm:
-            vocab = list(self.ind2char.values())
-            vocab[0] = ""
-            decoder = build_ctcdecoder(vocab, None,
+            decoder = build_ctcdecoder(self.vocab, None,
                                             alpha=alpha,  # tuned on a val set
                                             beta=beta)  # tuned on a val set
             curr_decoder = decoder
