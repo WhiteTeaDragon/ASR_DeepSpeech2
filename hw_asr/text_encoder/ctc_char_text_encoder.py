@@ -13,18 +13,18 @@ import numpy as np
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
 from hw_asr.utils import ROOT_PATH
 
-
-def gunzip_something(gzipped_file_name, work_dir):
-    """gunzip the given gzipped file"""
-
-    # see warning about filename
-    filename = os.path.split(gzipped_file_name)[-1]
-    filename = re.sub(r"\.gz$", "", filename, flags=re.IGNORECASE)
-
-    with gzip.open(gzipped_file_name, 'rb') as f_in:  # <<==========
-        # extraction happens here
-        with open(os.path.join(work_dir, filename), 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
+#
+# def gunzip_something(gzipped_file_name, work_dir):
+#     """gunzip the given gzipped file"""
+#
+#     # see warning about filename
+#     filename = os.path.split(gzipped_file_name)[-1]
+#     filename = re.sub(r"\.gz$", "", filename, flags=re.IGNORECASE)
+#
+#     with gzip.open(gzipped_file_name, 'rb') as f_in:  # <<==========
+#         # extraction happens here
+#         with open(os.path.join(work_dir, filename), 'wb') as f_out:
+#             shutil.copyfileobj(f_in, f_out)
 
 
 class CTCCharTextEncoder(CharTextEncoder):
@@ -42,9 +42,9 @@ class CTCCharTextEncoder(CharTextEncoder):
         data_dir = ROOT_PATH / "lm_model"
         data_dir.mkdir(exist_ok=True, parents=True)
         self._data_dir = data_dir
-        shutil.register_unpack_format('gz',
-                                      ['.gz', ],
-                                      gunzip_something)
+        # shutil.register_unpack_format('gz',
+        #                               ['.gz', ],
+        #                               gunzip_something)
         self.decoder = None
 
     def ctc_decode(self, inds: List[int]) -> str:
