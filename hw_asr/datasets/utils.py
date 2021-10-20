@@ -65,7 +65,7 @@ def get_dataloaders(configs: ConfigParser):
             for i in range(len(alphabet)):
                 new_symbol = []
                 for j in range(len(alphabet[i])):
-                    if alphabet[i][j] != "_":
+                    if alphabet[i][j] != "▁":
                         new_symbol.append(alphabet[i][j])
                     else:
                         new_symbol.append(" ")
