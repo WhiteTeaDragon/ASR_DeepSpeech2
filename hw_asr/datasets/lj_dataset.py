@@ -1,4 +1,5 @@
 import logging
+import librosa
 
 from datasets import load_dataset
 
@@ -24,13 +25,13 @@ class LJDataset(BaseDataset):
         super().__init__(index, *args, **kwargs)
 
     def _get_or_load_index(self):
-        index = _load()
+        index = _load()["train"]
         new_index = []
         self.all_text_txt_file_path = str(self._data_dir / "all_txt_file.txt")
         all_txt_file = open(self.all_text_txt_file_path, "w")
         for entry in index:
-            new_entry = {"audio_len": len(entry["audio"]["array"]) / entry[
-                "sample_rate"],
+            new_entry = {"audio_len": librosa.get_duration(
+                filename=entry["file"]),
                          "path": entry["path"],
                          "text": entry["text"].lower()}
             new_index.append(new_entry)
