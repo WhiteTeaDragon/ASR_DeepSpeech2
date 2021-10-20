@@ -25,6 +25,9 @@ class CTCBPETextEncoder(CTCCharTextEncoder):
                 ans.append(inds[i])
         ans_final = []
         for i in range(len(ans)):
-            if ans[i] != self.EMPTY_TOK:
+            if ans[i] != 0:
                 ans_final.append(ans[i])
         return self.bpe_object.decode(ans_final)[0]
+
+    def __len__(self):
+        return len(self.vocab)
