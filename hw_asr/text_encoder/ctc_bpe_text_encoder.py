@@ -14,7 +14,9 @@ class CTCBPETextEncoder(CTCCharTextEncoder):
         self.vocab = self.bpe_object.vocab()
 
     def encode(self, text) -> Tensor:
-        return self.bpe_object.encode(text, output_type=yttm.OutputType.ID)
+        return Tensor(
+            self.bpe_object.encode(
+                text, output_type=yttm.OutputType.ID)).unsqueeze(0)
 
     def ctc_decode(self, inds: List[int]) -> str:
         ans = []
