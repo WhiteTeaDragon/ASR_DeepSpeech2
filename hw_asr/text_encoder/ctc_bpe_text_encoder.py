@@ -15,7 +15,7 @@ class CTCBPETextEncoder(CTCCharTextEncoder):
         self.vocab = self.bpe_object.vocab()
 
     def decode(self, vector: Union[Tensor, np.ndarray, List[int]]):
-        res = self.bpe_object.decode(vector)
+        res = self.bpe_object.decode(vector.tolist())
         if len(res) == 0:
             return ""
         return res[0]
