@@ -43,11 +43,11 @@ def get_dataloaders(configs: ConfigParser):
         # create and join datasets
         datasets = []
         if split == "train":
-            all_txt_file = open(str(ROOT_PATH / "data" / "datasets" /
-                                    "train_bpe_texts.txt"), "w")
+            datasets_path = ROOT_PATH / "data" / "datasets"
+            datasets_path.mkdir(exist_ok=True, parents=True)
+            all_txt_file_path = str(datasets_path / "train_bpe_texts.txt")
+            all_txt_file = open(all_txt_file_path, "w")
             all_txt_file.close()
-            all_txt_file_path = str(ROOT_PATH / "data" / "datasets" /
-                                    "train_bpe_texts.txt")
         for ds in params["datasets"]:
             datasets.append(configs.init_obj(
                 ds, hw_asr.datasets, config_parser=configs,
