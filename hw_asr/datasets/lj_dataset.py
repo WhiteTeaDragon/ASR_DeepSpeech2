@@ -6,6 +6,7 @@ from datasets import load_dataset
 from hw_asr.base.base_dataset import BaseDataset
 from hw_asr.utils import ROOT_PATH
 from hw_asr.utils.parse_config import ConfigParser
+from hw_asr.base.base_text_encoder import BaseTextEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +34,10 @@ class LJDataset(BaseDataset):
             new_entry = {"audio_len": librosa.get_duration(
                 filename=entry["file"]),
                          "path": entry["file"],
-                         "text": entry["text"].lower()}
+                         "text": BaseTextEncoder.normalize_text(
+                             entry["normalized_text"].lower())}
             new_index.append(new_entry)
-            print(new_entry["text"].lower(), file=all_txt_file)
+            print(new_entry["text"], file=all_txt_file)
         all_txt_file.close()
         return new_index
 
