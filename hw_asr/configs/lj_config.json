@@ -46,7 +46,7 @@
   },
   "data": {
     "all": {
-      "batch_size": 128,
+      "batch_size": 1000,
       "num_workers": 5,
       "test_share": 0.2,
       "datasets": [
