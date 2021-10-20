@@ -55,11 +55,8 @@ def get_dataloaders(configs: ConfigParser):
         bpe_vocab_size = int(configs["bpe"]["vocab_size"])
     config_params = list(configs["data"].items())
     for i in range(len(config_params)):
-        assert config_params[i][0] in ("train", "val", "test"), "Data types " \
-                                                                "must be " \
-                                                                "one of " \
-                                                                "train, val," \
-                                                                " test, all"
+        assert config_params[i][0] in ("train", "val", "test", "all"),\
+            "Data types must be one of train, val, test, all"
         if config_params[i][0] == "all":
             assert len(config_params) == 1, "With all specified -- use only" \
                                             " one dataset"
