@@ -15,7 +15,7 @@ from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 
 def concatenate_files(file_1, file_2):
     with open(file_1, 'a') as destination:
-        destination.write("\n")
+        destination.write(b"\n".decode("utf-8"))
         with open(file_2, 'rb') as source:
             shutil.copyfileobj(source, destination)
 
