@@ -69,7 +69,7 @@ def get_dataloaders(configs: ConfigParser):
                                        spec_augs=spec_augs)
             if bpe is None:
                 model_path = str(ROOT_PATH / "data" / "datasets" / "bpe.model")
-                yttm.BPE.train(data=dataset.all_txt_file_path,
+                yttm.BPE.train(data=dataset.all_text_txt_file_path,
                                vocab_size=bpe_vocab_size,
                                model=model_path)
                 bpe = yttm.BPE(model=model_path)
