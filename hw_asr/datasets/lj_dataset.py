@@ -35,7 +35,7 @@ class LJDataset(BaseDataset):
                          "path": entry["file"],
                          "text": entry["text"].lower()}
             new_index.append(new_entry)
-            print(new_entry["text"], file=all_txt_file)
+            print(new_entry["text"].lower(), file=all_txt_file)
         all_txt_file.close()
         return new_index
 
