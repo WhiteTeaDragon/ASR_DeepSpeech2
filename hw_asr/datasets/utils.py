@@ -82,8 +82,8 @@ def get_dataloaders(configs: ConfigParser):
             train_dataset, test_dataset = torch.utils.data.random_split(
                 dataset, [train_size, test_size])
             test_dataset.dataset = copy(dataset)
-            test_dataset.dataset.wave_augs = []
-            test_dataset.dataset.spec_augs = []
+            test_dataset.dataset.wave_augs = None
+            test_dataset.dataset.spec_augs = None
             batch_sampler, bs, shuffle, train_dataloader = create_dataloader(
                 configs, dataset, num_workers, params, train_dataset)
             test_dataloader = DataLoader(
