@@ -37,7 +37,7 @@ class LJDataset(BaseDataset):
             new_index.append(new_entry)
             print(new_entry["text"], file=all_txt_file)
         all_txt_file.close()
-        return index
+        return new_index
 
 
 if __name__ == "__main__":
