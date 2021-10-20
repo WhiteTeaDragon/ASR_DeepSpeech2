@@ -74,6 +74,7 @@ def get_dataloaders(configs: ConfigParser):
                                model=model_path)
                 bpe = yttm.BPE(model=model_path)
             train_text_encoder = CTCBPETextEncoder(bpe)
+            dataset.set_text_encoder(train_text_encoder)
             assert "test_share" in params, "You must specify share of test " \
                                            "examples"
             test_share = float(params["test_share"])
