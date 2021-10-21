@@ -1,7 +1,7 @@
 {
   "name": "lj_lstm_config",
   "n_gpu": 1,
-  "overfit_on_one_batch": "True",
+  "overfit_on_one_batch": "False",
   "bpe": {
     "vocab_size": 32,
     "model_file": 0
@@ -89,12 +89,12 @@
   "lr_scheduler": {
     "type": "CosineAnnealingLR",
     "args": {
-      "T_max": 1000
+      "T_max": 30000
     },
     "frequency": "batch"
   },
   "trainer": {
-    "epochs": 50,
+    "epochs": 300,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
