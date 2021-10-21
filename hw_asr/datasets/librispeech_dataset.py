@@ -11,6 +11,7 @@ from tqdm import tqdm
 from hw_asr.base.base_dataset import BaseDataset
 from hw_asr.utils import ROOT_PATH
 from hw_asr.utils.parse_config import ConfigParser
+from hw_asr.datasets.utils import add_element_to_index
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,8 @@ class LibrispeechDataset(BaseDataset):
             index = self._get_or_load_index(part)
 
         super().__init__(index, *args, **kwargs)
+        self.all_text_txt_file_path = str(self._data_dir / part /
+                                          "all_txt_file.txt")
 
     def _load_part(self, part):
         arch_path = self._data_dir / f"{part}.tar.gz"
@@ -58,16 +61,7 @@ class LibrispeechDataset(BaseDataset):
 
     def _get_or_load_index(self, part):
         index_path = self._data_dir / f"{part}_index.json"
-        if index_path.exists():
-            with index_path.open() as f:
-                index = json.load(f)
-        else:
-            index = self._create_index(part)
-            with index_path.open("w") as f:
-                json.dump(index, f, indent=2)
-        self.all_text_txt_file_path = str(self._data_dir / part /
-                                          "all_txt_file.txt")
-        return index
+        return self.get_index(index_path, part)
 
     def _create_index(self, part):
         index = []
@@ -90,16 +84,8 @@ class LibrispeechDataset(BaseDataset):
                     f_id = line.split()[0]
                     f_text = " ".join(line.split()[1:]).strip()
                     flac_path = flac_dir / f"{f_id}.flac"
-                    t_info = torchaudio.info(str(flac_path))
-                    length = t_info.num_frames / t_info.sample_rate
-                    index.append(
-                        {
-                            "path": str(flac_path.absolute().resolve()),
-                            "text": f_text.lower(),
-                            "audio_len": length,
-                        }
-                    )
-                    print(f_text.lower(), file=all_txt_file)
+                    add_element_to_index(all_txt_file, index, f_text,
+                                         flac_path)
         all_txt_file.close()
         return index
 

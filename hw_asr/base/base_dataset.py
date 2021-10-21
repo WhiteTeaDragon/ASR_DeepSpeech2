@@ -4,6 +4,7 @@ import random
 import numpy as np
 import torch
 import torchaudio
+import json
 from torch import Tensor
 from torch.utils.data import Dataset
 
@@ -150,3 +151,16 @@ class BaseDataset(Dataset):
 
     def set_text_encoder(self, text_encoder):
         self.text_encoder = text_encoder
+
+    def get_index(self, index_path, subfolder):
+        if index_path.exists():
+            with index_path.open() as f:
+                index = json.load(f)
+        else:
+            index = self._create_index(subfolder)
+            with index_path.open("w") as f:
+                json.dump(index, f, indent=2)
+        return index
+
+    def _create_index(self, subfolder):
+        pass

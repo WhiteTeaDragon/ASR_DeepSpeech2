@@ -3,6 +3,7 @@ from copy import copy
 import shutil
 import youtokentome as yttm
 import torch
+import torchaudio
 
 from torch.utils.data import DataLoader, ChainDataset
 
@@ -143,3 +144,16 @@ def get_dataloaders(configs: ConfigParser):
     if train_text_encoder is None:
         train_text_encoder = CTCCharTextEncoder.get_simple_alphabet()
     return dataloaders, train_text_encoder
+
+
+def add_element_to_index(all_txt_file, index, text, wav_path):
+    t_info = torchaudio.info(str(wav_path))
+    length = t_info.num_frames / t_info.sample_rate
+    index.append(
+        {
+            "path": str(wav_path.absolute().resolve()),
+            "text": text.lower(),
+            "audio_len": length,
+        }
+    )
+    print(text.lower(), file=all_txt_file)

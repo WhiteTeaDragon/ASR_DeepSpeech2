@@ -1,0 +1,123 @@
+{
+  "name": "numbers_config",
+  "n_gpu": 1,
+  "overfit_on_one_batch": "True",
+  "bpe": {
+    "vocab_size": 10,
+    "model_file": 0
+  },
+  "preprocessing": {
+    "sr": 16000,
+    "spectrogram": {
+      "type": "MelSpectrogram",
+      "args": {
+        "n_mels": 64,
+        "n_fft": 512
+      }
+    }
+  },
+  "augmentations": {
+    "p": 1,
+    "wave": [
+      {
+        "type": "Gain",
+        "args": {
+          "min_gain_in_db": -15.0,
+          "max_gain_in_db": 5.0,
+          "p": 0.5
+      }},
+      {
+        "type": "Noise",
+        "args": {
+          "noise_url":  "https://zenodo.org/record/2529934/files/FSDnoisy18k.audio_test.zip",
+          "noise_level": 1
+        }
+      }, {"type": "SpeedPerturbation",
+        "args": {"speed_min": 0.9, "speed_max": 1.1}}
+    ],
+    "spectrogram": [{"type": "Cutout", "args": {}},
+      {"type": "RandomErasing", "args": {}}]
+  },
+  "arch": {
+    "type": "QuartzNet",
+    "args": {
+      "n_feats": 64,
+      "num_of_block_repeats": 1,
+      "num_of_repeats_inside_blocks": 5
+    }
+  },
+  "data": {
+    "train": {
+      "batch_size": 128,
+      "num_workers": 5,
+      "datasets": [
+        {
+          "type": "NumbersDataset",
+          "args": {
+            "max_audio_length": 20.0,
+            "max_text_length": 200
+          }
+        }
+      ]
+    },
+    "test": {
+      "batch_size": 128,
+      "num_workers": 5,
+      "datasets": [
+        {
+          "type": "NumbersDataset",
+          "args": {
+            "max_audio_length": 20.0,
+            "max_text_length": 200
+          }
+        }
+      ]
+    }
+  },
+  "optimizer": {
+    "type": "SGD",
+    "args": {
+      "lr": 0.1,
+      "momentum": 0.9
+    }
+  },
+  "loss": {
+    "type": "CTCLoss",
+    "args": {}
+  },
+  "metrics": [
+    {
+      "type": "ArgmaxWERMetric",
+      "args": {
+        "name": "WER (argmax)"
+      }
+    },
+    {
+      "type": "ArgmaxCERMetric",
+      "args": {
+        "name": "CER (argmax)"
+      }
+    }
+  ],
+  "lr_scheduler": {
+    "type": "OneCycleLR",
+    "args": {
+      "max_lr": 0.1,
+      "total_steps": 25000
+    },
+    "frequency": "batch"
+  },
+  "trainer": {
+    "epochs": 50,
+    "save_dir": "saved/",
+    "save_period": 5,
+    "verbosity": 2,
+    "monitor": "min val_loss",
+    "early_stop": 100,
+    "visualize": "wandb",
+    "wandb_project": "asr_project_numbers",
+    "len_epoch": 100,
+    "grad_norm_clip": 2,
+    "beam_search": "False"
+  }
+}

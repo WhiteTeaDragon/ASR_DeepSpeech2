@@ -9,7 +9,7 @@ matplotlib~=3.4.3
 pandas~=1.3.3
 speechbrain~=0.5.9
 torchaudio~=0.9.1
-datasets
+datasets~=1.13.1
 torch_audiomentations
 editdistance~=0.6.0
 Pillow~=8.3.2
@@ -20,3 +20,4 @@ pypi-kenlm
 
 librosa~=0.8.1
 youtokentome~=1.0.3
+gdown~=4.2.0
