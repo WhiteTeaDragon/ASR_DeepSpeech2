@@ -16,6 +16,8 @@ LINK = "https://drive.google.com/uc?id=1HKtLLbiEk0c3l1mKz9LUXRAmKd3DvD0P"
 class NumbersDataset(BaseDataset):
     def __init__(self, part, data_dir=None, *args,
                  **kwargs):
+        assert part in ("train", "test-example"), "Wrong part for numbers " \
+                                                  "dataset"
         if data_dir is None:
             data_dir = ROOT_PATH / "data" / "datasets" / "numbers"
             data_dir.mkdir(exist_ok=True, parents=True)

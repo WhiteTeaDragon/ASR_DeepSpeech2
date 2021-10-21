@@ -68,6 +68,7 @@
         {
           "type": "NumbersDataset",
           "args": {
+            "part": "test-example",
             "max_audio_length": 20.0,
             "max_text_length": 200
           }
