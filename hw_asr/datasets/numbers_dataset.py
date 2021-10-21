@@ -20,14 +20,11 @@ class NumbersDataset(BaseDataset):
             data_dir = ROOT_PATH / "data" / "datasets" / "numbers"
             data_dir.mkdir(exist_ok=True, parents=True)
         self._data_dir = data_dir
-        subfolder = "train"
-        if part == "test" or part == "val":
-            subfolder = "test-example"
-        self.all_text_txt_file_path = str(self._data_dir / subfolder /
+        self.all_text_txt_file_path = str(self._data_dir / part /
                                           "all_txt_file.txt")
         index = self._get_or_load_index("train")
-        index_test = self._get_or_load_index("test")
-        if part == "test" or part == "val":
+        index_test = self._get_or_load_index("test-example")
+        if part == "test-example":
             index = index_test
         super().__init__(index, *args, **kwargs)
 
