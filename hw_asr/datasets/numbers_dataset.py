@@ -35,9 +35,9 @@ class NumbersDataset(BaseDataset):
         print(f"Loading numbers dataset")
         gdown.download(LINK, str(arch_path), quiet=False)
         shutil.unpack_archive(arch_path, self._data_dir)
-        for fpath in (self._data_dir / "LibriSpeech").iterdir():
+        for fpath in (self._data_dir / "numbers").iterdir():
             shutil.move(str(fpath), str(self._data_dir / fpath.name))
-        shutil.rmtree(str(self._data_dir / "LibriSpeech"))
+        shutil.rmtree(str(self._data_dir / "numbers"))
 
     def _get_or_load_index(self, part):
         subfolder = "train"
