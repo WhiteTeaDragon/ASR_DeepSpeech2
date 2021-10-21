@@ -25,6 +25,8 @@ class BaseDataset(Dataset):
         limit=None,
         max_audio_length=None,
         max_text_length=None,
+        min_audio_length=None,
+        min_text_length=None
     ):
         self.text_encoder = CTCCharTextEncoder.get_simple_alphabet()
         self.config_parser = config_parser
@@ -46,7 +48,8 @@ class BaseDataset(Dataset):
             )
 
         index = self._filter_records_from_dataset(
-            index, max_audio_length, max_text_length, limit
+            index, max_audio_length, max_text_length, min_audio_length,
+            min_text_length, limit
         )
 
         # it's a good idea to sort index by audio length
@@ -104,7 +107,8 @@ class BaseDataset(Dataset):
 
     @staticmethod
     def _filter_records_from_dataset(
-        index: list, max_audio_length, max_text_length, limit
+        index: list, max_audio_length, max_text_length, min_audio_length,
+            min_text_length, limit
     ) -> list:
         initial_size = len(index)
         if max_audio_length is not None:
@@ -119,7 +123,19 @@ class BaseDataset(Dataset):
             exceeds_audio_length = False
 
         initial_size = len(index)
-        if max_audio_length is not None:
+        if min_audio_length is not None:
+            short_audio_length = np.array(
+                [el["audio_len"] for el in index]) <= min_audio_length
+            _total = short_audio_length.sum()
+            logger.info(
+                f"{_total} ({_total / initial_size:.1%}) records are shorter "
+                f"then {min_audio_length} seconds. Excluding them."
+            )
+        else:
+            short_audio_length = False
+
+        initial_size = len(index)
+        if max_text_length is not None:
             exceeds_text_length = np.array(
                 [
                     len(BaseTextEncoder.normalize_text(el["text"]))
@@ -132,7 +148,22 @@ class BaseDataset(Dataset):
         else:
             exceeds_text_length = False
 
-        records_to_filter = exceeds_text_length | exceeds_audio_length
+        initial_size = len(index)
+        if min_text_length is not None:
+            short_text_length = np.array(
+                [
+                    len(BaseTextEncoder.normalize_text(el["text"]))
+                    for el in index]) <= min_text_length
+            _total = exceeds_text_length.sum()
+            logger.info(
+                f"{_total} ({_total / initial_size:.1%}) records are shorter "
+                f"then {min_text_length} characters. Excluding them."
+            )
+        else:
+            short_text_length = False
+
+        records_to_filter = exceeds_text_length | exceeds_audio_length\
+                            | short_text_length | short_audio_length
 
         if records_to_filter is not False and records_to_filter.any():
             _total = records_to_filter.sum()

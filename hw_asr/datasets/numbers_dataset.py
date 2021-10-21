@@ -40,11 +40,8 @@ class NumbersDataset(BaseDataset):
         shutil.rmtree(str(self._data_dir / "numbers"))
 
     def _get_or_load_index(self, part):
-        subfolder = "train"
-        if part == "test" or part == "val":
-            subfolder = "test-example"
-        index_path = self._data_dir / subfolder / "index.json"
-        return self.get_index(index_path, subfolder)
+        index_path = self._data_dir / part / "index.json"
+        return self.get_index(index_path, part)
 
     def _create_index(self, subfolder):
         index = []
