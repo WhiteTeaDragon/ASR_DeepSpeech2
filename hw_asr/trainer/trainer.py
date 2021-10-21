@@ -13,6 +13,11 @@ from hw_asr.metric.utils import calc_cer, calc_wer
 from hw_asr.utils import inf_loop, MetricTracker
 
 
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
+
 class Trainer(BaseTrainer):
     """
     Trainer class
@@ -116,7 +121,7 @@ class Trainer(BaseTrainer):
                     )
                 )
                 self.writer.add_scalar(
-                    "learning rate", self.lr_scheduler.get_last_lr()[0]
+                    "learning rate", get_lr(self.optimizer)
                 )
                 self._log_predictions(part="train", **batch)
                 self._log_spectrogram(batch["spectrogram"])
