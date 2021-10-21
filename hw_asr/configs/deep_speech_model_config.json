@@ -1,7 +1,7 @@
 {
   "name": "lj_deep_speech_config",
   "n_gpu": 1,
-  "overfit_on_one_batch": "True",
+  "overfit_on_one_batch": "False",
   "bpe": {
     "vocab_size": 32,
     "model_file": 0
@@ -42,7 +42,7 @@
     "type": "DeepSpeechModel",
     "args": {
       "n_feats": 64,
-      "n_layers": 3,
+      "n_layers": 4,
       "hidden_size": 512,
       "dropout": 0
     }
@@ -64,10 +64,9 @@
     }
   },
   "optimizer": {
-    "type": "SGD",
+    "type": "AdamW",
     "args": {
-      "lr": 0.1,
-      "momentum": 0.9
+      "lr": 0.01
     }
   },
   "loss": {
@@ -89,14 +88,16 @@
     }
   ],
   "lr_scheduler": {
-    "type": "CosineAnnealingLR",
+    "type": "OneCycleLR",
     "args": {
-      "T_max": 30000
+      "total_steps": 12500,
+      "anneal_strategy": "linear",
+      "max_lr": 0.0005
     },
     "frequency": "batch"
   },
   "trainer": {
-    "epochs": 300,
+    "epochs": 50,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
@@ -104,7 +105,7 @@
     "early_stop": 100,
     "visualize": "wandb",
     "wandb_project": "asr_project_lj",
-    "len_epoch": 100,
+    "len_epoch": 250,
     "grad_norm_clip": 2,
     "beam_search": "False"
   }
