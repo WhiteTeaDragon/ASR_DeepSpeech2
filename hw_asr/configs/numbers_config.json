@@ -61,7 +61,7 @@
         }
       ]
     },
-    "test": {
+    "val": {
       "batch_size": 128,
       "num_workers": 5,
       "datasets": [
