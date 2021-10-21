@@ -27,7 +27,6 @@ class DeepSpeechModel(BaseModel):
         self.fc = nn.Linear(2 * hidden_size, n_class)
 
     def forward(self, spectrogram, *args, **kwargs):
-        print(spectrogram.shape)
         x = self.convolutional(torch.transpose(spectrogram, 1, 2).unsqueeze(1)
                                )
         sizes = x.size()
