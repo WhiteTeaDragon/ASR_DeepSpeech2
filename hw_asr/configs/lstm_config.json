@@ -1,5 +1,5 @@
 {
-  "name": "numbers_config",
+  "name": "lj_lstm_config",
   "n_gpu": 1,
   "overfit_on_one_batch": "True",
   "bpe": {
@@ -102,7 +102,7 @@
     "monitor": "min val_loss",
     "early_stop": 100,
     "visualize": "wandb",
-    "wandb_project": "asr_project_numbers",
+    "wandb_project": "asr_project_lj",
     "len_epoch": 100,
     "grad_norm_clip": 2,
     "beam_search": "False"
