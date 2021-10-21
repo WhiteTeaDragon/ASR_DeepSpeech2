@@ -11,6 +11,8 @@
     "spectrogram": {
       "type": "MelSpectrogram",
       "args": {
+        "n_mels": 64,
+        "n_fft": 512
       }
     }
   },
@@ -39,7 +41,7 @@
   "arch": {
     "type": "QuartzNet",
     "args": {
-      "n_feats": 128,
+      "n_feats": 64,
       "num_of_block_repeats": 1,
       "num_of_repeats_inside_blocks": 5
     }
@@ -61,10 +63,11 @@
     }
   },
   "optimizer": {
-    "type": "SGD",
+    "type": "AdamW",
     "args": {
-      "lr": 0.1,
-      "momentum": 0.9
+      "lr": 0.01,
+      "betas": [0.8, 0.5],
+      "weight_decay": 0.001
     }
   },
   "loss": {
@@ -86,11 +89,11 @@
     }
   ],
   "lr_scheduler": {
-    "type": "ReduceLROnPlateau",
+    "type": "CosineAnnealingLR",
     "args": {
-      "patience": 2
+      "T_max": 25000
     },
-    "frequency": "epoch"
+    "frequency": "batch"
   },
   "trainer": {
     "epochs": 50,
