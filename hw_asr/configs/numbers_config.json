@@ -3,7 +3,7 @@
   "n_gpu": 1,
   "overfit_on_one_batch": "True",
   "bpe": {
-    "vocab_size": 10,
+    "vocab_size": 15,
     "model_file": 0
   },
   "preprocessing": {

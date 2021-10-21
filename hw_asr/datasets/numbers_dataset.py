@@ -52,11 +52,11 @@ class NumbersDataset(BaseDataset):
         if not split_dir.exists():
             self._load()
         csv_res = pd.read_csv(str(split_dir) + ".csv")
-        dict_res = csv_res.to_dict("index")
+        dict_res = csv_res.set_index("path").to_dict("index")
         all_txt_file = open(str(split_dir / "all_txt_file.txt"), "w")
         for key, value in dict_res.items():
             wav_path = self._data_dir / key
-            text = value[1]
+            text = str(value["number"])
             add_element_to_index(all_txt_file, index, text, wav_path)
         all_txt_file.close()
         return index
