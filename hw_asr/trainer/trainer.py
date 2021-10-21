@@ -129,14 +129,21 @@ class Trainer(BaseTrainer):
                 self._log_audio(batch["audio"], batch["sample_rate"], "train")
             if batch_idx >= self.len_epoch:
                 break
-        if self.lr_scheduler is not None and \
-                self.scheduler_frequency_of_update == "epoch":
-            self.lr_scheduler.step()
-        log = self.train_metrics.result()
 
+        log = self.train_metrics.result()
         if self.do_validation:
             val_log = self._valid_epoch(epoch)
             log.update(**{"val_" + k: v for k, v in val_log.items()})
+
+        if self.lr_scheduler is not None and \
+                self.scheduler_frequency_of_update == "epoch":
+            if self.lr_scheduler == torch.optim.lr_scheduler.ReduceLROnPlateau:
+                if not self.do_validation:
+                    raise ValueError("Cannot use ReduceLROnPlateau if "
+                                     "validation is off")
+                self.lr_scheduler.step(val_log["loss"])
+            else:
+                self.lr_scheduler.step()
 
         return log
 
