@@ -51,7 +51,7 @@ class NumbersDataset(BaseDataset):
         split_dir = self._data_dir / subfolder
         if not split_dir.exists():
             self._load()
-        csv_res = pd.read_csv(split_dir + ".csv")
+        csv_res = pd.read_csv(str(split_dir) + ".csv")
         dict_res = csv_res.to_dict("index")
         all_txt_file = open(str(split_dir / "all_txt_file.txt"), "w")
         for key, value in dict_res.items():
