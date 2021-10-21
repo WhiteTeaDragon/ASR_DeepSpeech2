@@ -137,7 +137,8 @@ class Trainer(BaseTrainer):
 
         if self.lr_scheduler is not None and \
                 self.scheduler_frequency_of_update == "epoch":
-            if self.lr_scheduler == torch.optim.lr_scheduler.ReduceLROnPlateau:
+            if isinstance(self.lr_scheduler,
+                          torch.optim.lr_scheduler.ReduceLROnPlateau):
                 if not self.do_validation:
                     raise ValueError("Cannot use ReduceLROnPlateau if "
                                      "validation is off")
