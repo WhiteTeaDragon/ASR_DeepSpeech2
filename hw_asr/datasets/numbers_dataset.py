@@ -33,7 +33,7 @@ class NumbersDataset(BaseDataset):
     def _load(self):
         arch_path = self._data_dir / "numbers.zip"
         print(f"Loading numbers dataset")
-        gdown.download(LINK, arch_path, quiet=False)
+        gdown.download(LINK, str(arch_path), quiet=False)
         shutil.unpack_archive(arch_path, self._data_dir)
         for fpath in (self._data_dir / "LibriSpeech").iterdir():
             shutil.move(str(fpath), str(self._data_dir / fpath.name))
