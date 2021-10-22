@@ -64,10 +64,10 @@
     }
   },
   "optimizer": {
-    "type": "SGD",
+    "not_resume": 1,
+    "type": "AdamW",
     "args": {
-      "lr": 0.1,
-      "momentum": 0.9
+      "lr": 0.01
     }
   },
   "loss": {
@@ -89,11 +89,13 @@
     }
   ],
   "lr_scheduler": {
-    "type": "ReduceLROnPlateau",
+    "type": "OneCycleLR",
     "args": {
-      "patience": 2
+      "total_steps": 12500,
+      "anneal_strategy": "linear",
+      "max_lr": 0.0005
     },
-    "frequency": "epoch"
+    "frequency": "batch"
   },
   "trainer": {
     "epochs": 100,

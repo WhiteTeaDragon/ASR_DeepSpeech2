@@ -184,7 +184,7 @@ class BaseTrainer:
                 checkpoint["config"]["optimizer"] != self.config[
                 "optimizer"] or
                 checkpoint["config"]["lr_scheduler"] != self.config[
-                "lr_scheduler"]
+                "lr_scheduler"] or "not_resume" in self.config["optimizer"]
         ):
             self.logger.warning(
                 "Warning: Optimizer or lr_scheduler given in config file is "
