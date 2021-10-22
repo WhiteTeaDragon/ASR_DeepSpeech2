@@ -86,10 +86,9 @@
     }
   ],
   "lr_scheduler": {
-    "type": "ConstantLR",
+    "type": "ReduceLROnPlateau",
     "args": {
-      "factor": 1,
-      "total_iters": 500
+      "patience": 3
     },
     "frequency": "epoch"
   },
