@@ -3,6 +3,7 @@ import random
 import torchaudio
 import torch
 import math
+import os
 
 from torch import Tensor
 from speechbrain.utils.data_utils import download_file
@@ -20,15 +21,20 @@ class Noise(AugmentationBase):
         arch_path = data_dir / "FSDnoisy18k.audio_test.zip"
         self.noise_level = noise_level
         print(f"Loading noise")
+        self.file_paths = []
         if not arch_path.exists():
             download_file(noise_url, arch_path)
             shutil.unpack_archive(arch_path, data_dir)
-            self.file_paths = []
             for fpath in (data_dir / "FSDnoisy18k.audio_test").iterdir():
                 filename = str(data_dir / fpath.name)
                 shutil.move(str(fpath), filename)
                 self.file_paths.append(filename)
             shutil.rmtree(str(data_dir / "FSDnoisy18k.audio_test"))
+        else:
+            for f in os.listdir(data_dir):
+                curr_file = os.path.join(data_dir, f)
+                if os.path.isfile(curr_file) and curr_file.endswith(".wav"):
+                    self.file_paths.append(curr_file)
 
     def __call__(self, data: Tensor, sample_rate):
         _, len_audio = data.shape
