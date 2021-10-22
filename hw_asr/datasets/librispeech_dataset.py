@@ -73,7 +73,10 @@ class LibrispeechDataset(BaseDataset):
         for dirpath, dirnames, filenames in os.walk(str(split_dir)):
             if any([f.endswith(".flac") for f in filenames]):
                 flac_dirs.add(dirpath)
-        all_txt_file = open(str(split_dir / "all_txt_file.txt"), "w")
+        if self.create_bpe:
+            all_txt_file = open(str(split_dir / "all_txt_file.txt"), "w")
+        else:
+            all_txt_file = None
         for flac_dir in tqdm(
                 list(flac_dirs), desc=f"Preparing librispeech folders: {part}"
         ):
@@ -86,7 +89,8 @@ class LibrispeechDataset(BaseDataset):
                     flac_path = flac_dir / f"{f_id}.flac"
                     add_element_to_index(all_txt_file, index, f_text,
                                          flac_path)
-        all_txt_file.close()
+        if all_txt_file is not None:
+            all_txt_file.close()
         return index
 
 

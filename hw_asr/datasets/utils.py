@@ -64,6 +64,7 @@ def get_dataloaders(configs: ConfigParser):
             params = config_params[i][1]
             num_workers = params.get("num_workers", 1)
             wave_augs, spec_augs = hw_asr.augmentations.from_configs(configs)
+            create_bpe = bpe is None
             dataset = configs.init_obj(params["datasets"][0],
                                        hw_asr.datasets, config_parser=configs,
                                        wave_augs=wave_augs,
@@ -167,4 +168,5 @@ def add_element_to_index(all_txt_file, index, text, wav_path):
             "audio_len": length,
         }
     )
-    print(text.lower(), file=all_txt_file)
+    if all_txt_file is not None:
+        print(text.lower(), file=all_txt_file)
