@@ -88,7 +88,7 @@
   "lr_scheduler": {
     "type": "ReduceLROnPlateau",
     "args": {
-      "patience": 2
+      "patience": 3
     },
     "frequency": "epoch"
   },
