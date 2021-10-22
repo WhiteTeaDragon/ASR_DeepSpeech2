@@ -53,6 +53,7 @@
         {
           "type": "LibrispeechDataset",
           "args": {
+            "data_dir": "/home/jupyter/mnt/s3/bucket_hse/data/datasets/librispeech",
             "part": "train-clean-360",
             "max_audio_length": 20.0,
             "max_text_length": 200
@@ -67,6 +68,7 @@
         {
           "type": "LibrispeechDataset",
           "args": {
+            "data_dir": "/home/jupyter/mnt/s3/bucket_hse/data/datasets/librispeech",
             "part": "dev-clean",
             "max_audio_length": 20.0,
             "max_text_length": 200
