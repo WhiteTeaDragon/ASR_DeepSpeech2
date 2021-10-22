@@ -18,16 +18,17 @@ class Noise(AugmentationBase):
         data_dir = ROOT_PATH / "data" / "noise"
         data_dir.mkdir(exist_ok=True, parents=True)
         arch_path = data_dir / "FSDnoisy18k.audio_test.zip"
-        print(f"Loading noise")
-        download_file(noise_url, arch_path)
-        shutil.unpack_archive(arch_path, data_dir)
-        self.file_paths = []
-        for fpath in (data_dir / "FSDnoisy18k.audio_test").iterdir():
-            filename = str(data_dir / fpath.name)
-            shutil.move(str(fpath), filename)
-            self.file_paths.append(filename)
-        shutil.rmtree(str(data_dir / "FSDnoisy18k.audio_test"))
         self.noise_level = noise_level
+        print(f"Loading noise")
+        if not arch_path.exists():
+            download_file(noise_url, arch_path)
+            shutil.unpack_archive(arch_path, data_dir)
+            self.file_paths = []
+            for fpath in (data_dir / "FSDnoisy18k.audio_test").iterdir():
+                filename = str(data_dir / fpath.name)
+                shutil.move(str(fpath), filename)
+                self.file_paths.append(filename)
+            shutil.rmtree(str(data_dir / "FSDnoisy18k.audio_test"))
 
     def __call__(self, data: Tensor, sample_rate):
         _, len_audio = data.shape
