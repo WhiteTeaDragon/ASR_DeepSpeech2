@@ -69,7 +69,12 @@ def get_dataloaders(configs: ConfigParser):
                                        wave_augs=wave_augs,
                                        spec_augs=spec_augs)
             if bpe is None:
-                model_path = str(ROOT_PATH / "data" / "datasets" / "bpe.model")
+                if "model_path" in configs["bpe"]:
+                    model_path = configs["bpe"]["model_path"]
+                else:
+                    model_path = str(ROOT_PATH / "data" / "datasets" / "bpe"
+                                                                       ".model"
+                                     )
                 yttm.BPE.train(data=dataset.all_text_txt_file_path,
                                vocab_size=bpe_vocab_size,
                                model=model_path)
@@ -109,7 +114,10 @@ def get_dataloaders(configs: ConfigParser):
         # create and join datasets
         datasets = []
         if split == "train" and bpe is None:
-            datasets_path = ROOT_PATH / "data" / "datasets"
+            if "parent_model_path" in configs["bpe"]:
+                datasets_path = configs["bpe"]["parent_model_path"]
+            else:
+                datasets_path = ROOT_PATH / "data" / "datasets"
             datasets_path.mkdir(exist_ok=True, parents=True)
             all_txt_file_path = str(datasets_path / "train_bpe_texts.txt")
             all_txt_file = open(all_txt_file_path, "w")
@@ -123,7 +131,10 @@ def get_dataloaders(configs: ConfigParser):
                 concatenate_files(all_txt_file_path, curr_txt_file_path)
 
         if split == "train" and bpe is None:
-            model_path = str(ROOT_PATH / "data" / "datasets" / "bpe.model")
+            if "model_path" in configs["bpe"]:
+                model_path = configs["bpe"]["model_path"]
+            else:
+                model_path = str(ROOT_PATH / "data" / "datasets" / "bpe.model")
             yttm.BPE.train(data=all_txt_file_path, vocab_size=bpe_vocab_size,
                            model=model_path)
             bpe = yttm.BPE(model=model_path)
