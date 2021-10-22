@@ -68,7 +68,8 @@ def get_dataloaders(configs: ConfigParser):
             dataset = configs.init_obj(params["datasets"][0],
                                        hw_asr.datasets, config_parser=configs,
                                        wave_augs=wave_augs,
-                                       spec_augs=spec_augs)
+                                       spec_augs=spec_augs,
+                                       create_bpe=create_bpe)
             if bpe is None:
                 if "model_path" in configs["bpe"]:
                     model_path = configs["bpe"]["model_path"]
@@ -114,6 +115,7 @@ def get_dataloaders(configs: ConfigParser):
 
         # create and join datasets
         datasets = []
+        create_bpe = False
         if split == "train" and bpe is None:
             if "parent_model_path" in configs["bpe"]:
                 datasets_path = configs["bpe"]["parent_model_path"]
@@ -123,10 +125,12 @@ def get_dataloaders(configs: ConfigParser):
             all_txt_file_path = str(datasets_path / "train_bpe_texts.txt")
             all_txt_file = open(all_txt_file_path, "w")
             all_txt_file.close()
+            create_bpe = True
         for ds in params["datasets"]:
             datasets.append(configs.init_obj(
                 ds, hw_asr.datasets, config_parser=configs,
-                wave_augs=wave_augs, spec_augs=spec_augs))
+                wave_augs=wave_augs, spec_augs=spec_augs,
+                create_bpe=create_bpe))
             if split == "train" and bpe is None:
                 curr_txt_file_path = datasets[-1].all_text_txt_file_path
                 concatenate_files(all_txt_file_path, curr_txt_file_path)
