@@ -88,12 +88,13 @@
   "lr_scheduler": {
     "type": "ReduceLROnPlateau",
     "args": {
-      "patience": 3
+      "patience": 1,
+      "factor": 0.75
     },
     "frequency": "epoch"
   },
   "trainer": {
-    "epochs": 60,
+    "epochs": 100,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
