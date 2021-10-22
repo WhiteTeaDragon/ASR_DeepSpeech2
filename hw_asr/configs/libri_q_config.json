@@ -4,7 +4,8 @@
   "overfit_on_one_batch": "False",
   "bpe": {
     "vocab_size": 100,
-    "model_file": 0
+    "model_file": 0,
+    "model_path": "hw-asr/data/datasets/bpe_lj.model"
   },
   "preprocessing": {
     "sr": 16000,
