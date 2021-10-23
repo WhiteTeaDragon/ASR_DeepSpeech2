@@ -6,10 +6,10 @@ from hw_asr.augmentations.base import AugmentationBase
 
 
 class Cutout(AugmentationBase):
-    def __init__(self):
+    def __init__(self, freq=50, time=120):
         self.aug = torch.nn.Sequential(
-            torchaudio.transforms.FrequencyMasking(50),
-            torchaudio.transforms.TimeMasking(120),
+            torchaudio.transforms.FrequencyMasking(freq),
+            torchaudio.transforms.TimeMasking(time),
         )
 
     def __call__(self, data: Tensor, sample_rate):

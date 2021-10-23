@@ -34,7 +34,7 @@
       }, {"type": "SpeedPerturbation",
         "args": {"speed_min": 0.9, "speed_max": 1.1}}
     ],
-    "spectrogram": [{"type": "Cutout", "args": {}},
+    "spectrogram": [{"type": "Cutout", "args": {"time": 60}},
       {"type": "RandomErasing", "args": {}}]
   },
   "arch": {
