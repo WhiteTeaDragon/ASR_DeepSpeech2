@@ -1,7 +1,7 @@
 {
   "name": "russian_deep_speech_config",
   "n_gpu": 1,
-  "overfit_on_one_batch": "True",
+  "overfit_on_one_batch": "False",
   "bpe": {
     "vocab_size": 100
   },
