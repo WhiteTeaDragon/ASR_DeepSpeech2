@@ -22,7 +22,7 @@ URL_LINKS = {
 
 
 class RussianDataset(BaseDataset):
-    def __init__(self, part, data_dir=None, *args,
+    def __init__(self, part, data_dir=None, create_bpe=False, *args,
                  **kwargs):
         assert part in URL_LINKS
 
@@ -33,6 +33,7 @@ class RussianDataset(BaseDataset):
             data_dir = Path(data_dir)
         self._data_dir = data_dir
         self.all_text_txt_file_path = None
+        self.create_bpe = create_bpe
         index = self._get_or_load_index(part)
 
         super().__init__(index, *args, **kwargs)

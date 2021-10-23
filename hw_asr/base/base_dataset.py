@@ -33,7 +33,6 @@ class BaseDataset(Dataset):
         self.config_parser = config_parser
         self.wave_augs = wave_augs
         self.spec_augs = spec_augs
-        self.create_bpe = create_bpe
 
         for entry in index:
             assert "audio_len" in entry, (

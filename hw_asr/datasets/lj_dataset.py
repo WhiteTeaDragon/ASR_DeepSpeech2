@@ -16,7 +16,7 @@ def _load():
 
 
 class LJDataset(BaseDataset):
-    def __init__(self, data_dir=None, *args, **kwargs):
+    def __init__(self, data_dir=None, create_bpe=False, *args, **kwargs):
         if data_dir is None:
             data_dir = ROOT_PATH / "data" / "datasets" / "lj"
             data_dir.mkdir(exist_ok=True, parents=True)
