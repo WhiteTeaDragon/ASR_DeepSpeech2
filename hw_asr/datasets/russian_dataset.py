@@ -84,7 +84,7 @@ class RussianDataset(BaseDataset):
                 curr_path = trans_path[i]
                 with curr_path.open() as f:
                     text = " ".join(f.readlines())
-                audio_path = curr_path[:-3] + file_ext
+                audio_path = str(curr_path)[:-3] + file_ext
                 f_text = " ".join(text.split()).strip()
                 add_element_to_index(all_txt_file, index, f_text,
                                      audio_path)
