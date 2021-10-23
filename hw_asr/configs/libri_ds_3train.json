@@ -104,7 +104,7 @@
   "lr_scheduler": {
     "type": "OneCycleLR",
     "args": {
-      "total_steps": 25000,
+      "total_steps": 50000,
       "anneal_strategy": "linear",
       "max_lr": 0.0005
     },
