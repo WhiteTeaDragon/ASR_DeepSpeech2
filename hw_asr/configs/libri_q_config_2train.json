@@ -33,7 +33,8 @@
       }, {"type": "SpeedPerturbation",
         "args": {"speed_min": 0.9, "speed_max": 1.1}}
     ],
-    "spectrogram": [{"type": "RandomErasing", "args": {}}]
+    "spectrogram": [{"type": "Cutout", "args": {}},
+      {"type": "RandomErasing", "args": {}}]
   },
   "arch": {
     "type": "QuartzNet",
