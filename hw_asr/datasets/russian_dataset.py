@@ -61,11 +61,11 @@ class RussianDataset(BaseDataset):
         for dirpath, dirnames, filenames in os.walk(str(split_dir)):
             for f in filenames:
                 if f.endswith(".opus"):
-                    file_ext = "opus"
+                    file_ext = ".opus"
                     audio_dirs.add(dirpath)
                     break
                 if f.endswith(".wav"):
-                    file_ext = "wav"
+                    file_ext = ".wav"
                     audio_dirs.add(dirpath)
                     break
         if len(audio_dirs) == 0:
