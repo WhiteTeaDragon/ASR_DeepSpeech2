@@ -26,8 +26,7 @@ class BaseDataset(Dataset):
         max_audio_length=None,
         max_text_length=None,
         min_audio_length=None,
-        min_text_length=None,
-        create_bpe=False
+        min_text_length=None
     ):
         self.text_encoder = CTCCharTextEncoder.get_simple_alphabet()
         self.config_parser = config_parser
