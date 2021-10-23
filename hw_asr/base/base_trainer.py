@@ -181,10 +181,15 @@ class BaseTrainer:
         # load optimizer state from checkpoint only when optimizer type is
         # not changed.
         if (
-                checkpoint["config"]["optimizer"] != self.config[
-                "optimizer"] or
-                checkpoint["config"]["lr_scheduler"] != self.config[
-                "lr_scheduler"] or "not_resume" in self.config["optimizer"]
+                checkpoint["config"]["optimizer"]["type"] != self.config[
+                "optimizer"]["type"] or
+                checkpoint["config"]["optimizer"]["args"] != self.config[
+                "optimizer"]["args"] or
+                checkpoint["config"]["lr_scheduler"]["type"] != self.config[
+                "lr_scheduler"]["type"] or
+                checkpoint["config"]["lr_scheduler"]["args"] != self.config[
+                "lr_scheduler"]["args"] or
+                "not_resume" in self.config["optimizer"]
         ):
             self.logger.warning(
                 "Warning: Optimizer or lr_scheduler given in config file is "
