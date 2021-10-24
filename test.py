@@ -159,7 +159,7 @@ if __name__ == "__main__":
     # update with addition configs from `args.config` if provided
     if args.config is not None:
         with Path(args.config).open() as f:
-            config.config.upadte(json.load(f))
+            config.config.update(json.load(f))
 
     # if `--test-data-folder` was provided, set it as a default test set
     if args.test_data_folder is not None:
