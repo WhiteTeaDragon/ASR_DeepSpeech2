@@ -8,10 +8,10 @@ from tqdm import tqdm
 
 import hw_asr.model as module_model
 from hw_asr.datasets.utils import get_dataloaders
-from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 from hw_asr.trainer import Trainer
 from hw_asr.utils import ROOT_PATH
 from hw_asr.utils.parse_config import ConfigParser
+from hw_asr.metric.utils import calc_cer, calc_wer
 
 DEFAULT_CHECKPOINT_PATH = ROOT_PATH / "default_test_model" / "checkpoint.pth"
 
@@ -41,6 +41,8 @@ def main(config, out_file):
 
     results = []
 
+    sum_wer_argmax, sum_cer_argmax = 0, 0
+    sum_wer_beam_search, sum_cer_beam_search = 0, 0
     with torch.no_grad():
         for batch_num, batch in enumerate(tqdm(dataloaders["test"])):
             batch = Trainer.move_batch_to_device(batch, device)
@@ -59,17 +61,35 @@ def main(config, out_file):
                 length = int(batch["log_probs_length"][i])
                 argmax = batch["argmax"][i][:length]
                 probs = batch["probs"][i][:length]
+                pred_text_argmax = text_encoder.ctc_decode(argmax)
+                pred_text_beam_search = text_encoder.ctc_beam_search(
+                            probs, beam_size=100
+                        )[:10]
                 results.append(
                     {
                         "ground_truth": batch["text"][i],
-                        "pred_text_argmax": text_encoder.ctc_decode(argmax),
-                        "pred_text_beam_search": text_encoder.ctc_beam_search(
-                            probs, beam_size=100
-                        )[:10],
+                        "pred_text_argmax": pred_text_argmax,
+                        "pred_text_beam_search": pred_text_beam_search,
+                        "wer_argmax": calc_wer(batch["text"][i],
+                                               pred_text_argmax),
+                        "cer_argmax": calc_cer(batch["text"][i],
+                                               pred_text_argmax),
+                        "wer_beam_search": calc_wer(batch["text"][i],
+                                                    pred_text_beam_search[0]),
+                        "cer_beam_search": calc_cer(batch["text"][i],
+                                                    pred_text_beam_search[0])
                     }
                 )
+                sum_wer_argmax += results[-1]["wer_argmax"]
+                sum_cer_argmax += results[-1]["cer_argmax"]
+                sum_wer_beam_search += results[-1]["wer_beam_search"]
+                sum_cer_beam_search += results[-1]["cer_beam_search"]
     with Path(out_file).open("w") as f:
         json.dump(results, f, indent=2)
+    print(f"Final argmax. WER:{sum_wer_argmax / len(results)},"
+          f"CER:{sum_cer_argmax / len(results)}")
+    print(f"Final beam_search. WER:{sum_wer_beam_search / len(results)},"
+          f"CER:{sum_cer_beam_search / len(results)}")
 
 
 if __name__ == "__main__":
