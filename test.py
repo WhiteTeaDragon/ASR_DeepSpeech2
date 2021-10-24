@@ -61,7 +61,7 @@ def main(config, out_file):
                 length = int(batch["log_probs_length"][i])
                 argmax = batch["argmax"][i][:length]
                 probs = batch["probs"][i][:length]
-                pred_text_argmax = text_encoder.ctc_decode(argmax)
+                pred_text_argmax = text_encoder.ctc_decode(argmax.tolist())
                 pred_text_beam_search = text_encoder.ctc_beam_search(
                             probs, beam_size=100
                         )[:10]
