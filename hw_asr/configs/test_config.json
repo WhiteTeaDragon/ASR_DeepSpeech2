@@ -1,14 +1,16 @@
 {
-  "test": {
-    "batch_size": 64,
-    "num_workers": 5,
-    "datasets": [
-      {
-        "type": "LibrispeechDataset",
-        "args": {
-          "part": "test-clean"
+  "data": {
+    "test": {
+      "batch_size": 64,
+      "num_workers": 5,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "test-clean"
+          }
         }
-      }
-    ]
+      ]
+    }
   }
 }
