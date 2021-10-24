@@ -17,7 +17,7 @@
     }
   },
   "augmentations": {
-    "p": 1,
+    "p": 0.5,
     "wave": [
       {
         "type": "Gain",
