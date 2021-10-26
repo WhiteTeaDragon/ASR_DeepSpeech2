@@ -1,6 +1,6 @@
 {
   "bpe": {
-    "model_path": "hw-asr/data/datasets/bpe.model"
+    "model_path": "hw-asr/data/datasets/russian_bpe.model"
   },
   "data": {
     "test": {
