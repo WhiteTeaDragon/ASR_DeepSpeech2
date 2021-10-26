@@ -70,7 +70,6 @@ def main(config, out_file, beam_search):
                     {
                         "ground_truth": batch["text"][i],
                         "pred_text_argmax": pred_text_argmax,
-                        "pred_text_beam_search": pred_text_beam_search,
                         "wer_argmax": calc_wer(batch["text"][i],
                                                pred_text_argmax),
                         "cer_argmax": calc_cer(batch["text"][i],
@@ -82,6 +81,8 @@ def main(config, out_file, beam_search):
                                                 pred_text_beam_search[0][0])
                     results[-1]["cer_beam_search"] = calc_cer(batch["text"][i],
                                                 pred_text_beam_search[0][0])
+                    results[-1]["pred_text_beam_search"] = \
+                        pred_text_beam_search
                 sum_wer_argmax += results[-1]["wer_argmax"]
                 sum_cer_argmax += results[-1]["cer_argmax"]
                 if beam_search:
