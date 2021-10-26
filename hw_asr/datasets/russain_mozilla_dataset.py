@@ -18,6 +18,8 @@ class RussianMozillaDataset(CustomAudioDataset):
         with open(tsv_file_path) as file:
             tsv_file = csv.reader(file, delimiter="\t")
             for line in tsv_file:
+                if line[1] == "path":
+                    continue
                 audio_path = data_dir / "clips" / line[1]
                 text = line[2]
                 entry = {"path": str(audio_path),
