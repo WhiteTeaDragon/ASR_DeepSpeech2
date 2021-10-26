@@ -15,6 +15,20 @@ from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 logger = logging.getLogger(__name__)
 
 
+def add_element_to_index(all_txt_file, index, text, wav_path):
+    t_info = torchaudio.info(str(wav_path))
+    length = t_info.num_frames / t_info.sample_rate
+    index.append(
+        {
+            "path": str(wav_path.absolute().resolve()),
+            "text": text.lower(),
+            "audio_len": length,
+        }
+    )
+    if all_txt_file is not None:
+        print(text.lower(), file=all_txt_file)
+
+
 class BaseDataset(Dataset):
     def __init__(
         self,

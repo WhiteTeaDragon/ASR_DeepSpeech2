@@ -6,10 +6,9 @@ from pathlib import Path
 from speechbrain.utils.data_utils import download_file
 from tqdm import tqdm
 
-from hw_asr.base.base_dataset import BaseDataset
+from hw_asr.base.base_dataset import BaseDataset, add_element_to_index
 from hw_asr.utils import ROOT_PATH
 from hw_asr.utils.parse_config import ConfigParser
-from hw_asr.datasets.utils import add_element_to_index
 
 logger = logging.getLogger(__name__)
 
