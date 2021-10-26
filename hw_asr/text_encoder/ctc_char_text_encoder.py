@@ -74,7 +74,7 @@ class CTCCharTextEncoder(CharTextEncoder):
                         for line in f_in:
                             f_out.write(line.lower().replace("'", ""))
             if lang == "rus":
-                url = "https://drive.google.com/file/d" \
+                url = "https://drive.google.com/file/uc?id=" \
                       "/1OeVsDTpM4lkWl9l_7eFVtxorCn_PE_aA "
                 self.file_path = self._data_dir / "russian.arpa"
                 gdown.download(url, self.file_path, quiet=False)
