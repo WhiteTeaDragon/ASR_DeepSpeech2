@@ -1,12 +1,24 @@
-# ASR project barebones
+# ASR project
 
 ## Installation guide
-
-< Write your installation guide here >
 
 ```shell
 pip install -r ./requirements.txt
 ```
+
+```kenlm``` module might not be installed properly if there is no ```g++``` 
+installed beforehand. If there are problems with ```kenlm```, follow these 
+instructions:
+
+```shell
+sudo apt-get update
+sudo apt-get install g++ -y
+pip install https://github.com/kpu/kenlm/archive/master.zip
+```
+
+## How to run ```test.py``` on pretrained models
+
+
 
 ## Recommended implementation order
 
