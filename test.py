@@ -109,7 +109,7 @@ if __name__ == "__main__":
         "-bs",
         "--beam_search",
         default=False,
-        action="store-true",
+        action="store_true",
         help="config using beam search",
     )
     args.add_argument(
