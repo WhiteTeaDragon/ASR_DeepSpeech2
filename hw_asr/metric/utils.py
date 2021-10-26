@@ -12,5 +12,7 @@ def calc_wer(target_text, predicted_text) -> float:
     prediction = predicted_text.split()
     if len(reference) == 0 and len(prediction) == 0:
         return 1
+    if len(reference) == 0:
+        return 0
     return editdistance.eval(reference, predicted_text.split()) / len(reference
                                                                       )
