@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class CustomAudioDataset(BaseDataset):
-    def __init__(self, data, *args, **kwargs):
+    def __init__(self, data, *args, create_bpe=False, **kwargs):
         index = data
         for entry in data:
             assert "path" in entry
