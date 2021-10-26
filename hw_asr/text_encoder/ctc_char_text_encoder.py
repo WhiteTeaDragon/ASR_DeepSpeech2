@@ -7,6 +7,7 @@ import shutil
 import math
 import numpy as np
 import gzip
+import gdown
 
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
 from hw_asr.utils import ROOT_PATH
@@ -46,30 +47,37 @@ class CTCCharTextEncoder(CharTextEncoder):
         return ''.join(ans_final)
 
     def ctc_beam_search(self, probs: torch.tensor, beam_size: int = 100,
-                        alpha=0.5, beta=1, use_lm=True) -> \
+                        alpha=0.5, beta=1, use_lm=True, lang="eng") -> \
             List[Tuple[str, float]]:
         """
         Performs beam search and returns a list of pairs (hypothesis,
         hypothesis probability).
         """
+        assert lang in ("eng", "rus")
         assert len(probs.shape) == 2
         char_length, voc_size = probs.shape
         assert voc_size == len(self.ind2char)
         if self.file_path is None and use_lm:
-            arch_path = self._data_dir / "3-gram.pruned.1e-7.arpa.gz"
-            self.upper_file_path = self._data_dir / \
-                                   "upper-3-gram.pruned.1e-7.arpa"
-            self.file_path = self._data_dir / "3-gram.pruned.1e-7.arpa"
             print(f"Loading kenlm")
-            download_file("http://www.openslr.org/resources/11/3-gram.pruned"
-                          ".1e-7.arpa.gz", arch_path)
-            with gzip.open(arch_path, 'rb') as f_in:
-                with open(self.upper_file_path, 'wb') as f_out:
-                    shutil.copyfileobj(f_in, f_out)
-            with open(self.upper_file_path, "r") as f_in:
-                with open(self.file_path, "w") as f_out:
-                    for line in f_in:
-                        f_out.write(line.lower().replace("'", ""))
+            if lang == "eng":
+                arch_path = self._data_dir / "3-gram.pruned.1e-7.arpa.gz"
+                upper_file_path = self._data_dir / \
+                                       "upper-3-gram.pruned.1e-7.arpa"
+                self.file_path = self._data_dir / "3-gram.pruned.1e-7.arpa"
+                download_file("http://www.openslr.org/resources/11/3-gram."
+                              "pruned.1e-7.arpa.gz", arch_path)
+                with gzip.open(arch_path, 'rb') as f_in:
+                    with open(upper_file_path, 'wb') as f_out:
+                        shutil.copyfileobj(f_in, f_out)
+                with open(upper_file_path, "r") as f_in:
+                    with open(self.file_path, "w") as f_out:
+                        for line in f_in:
+                            f_out.write(line.lower().replace("'", ""))
+            if lang == "rus":
+                url = "https://drive.google.com/file/d" \
+                      "/1OeVsDTpM4lkWl9l_7eFVtxorCn_PE_aA "
+                self.file_path = self._data_dir / "russian.arpa"
+                gdown.download(url, self.file_path, quiet=False)
         if self.decoder is None and use_lm:
             self.decoder = build_ctcdecoder(self.vocab,
                                    str(self.file_path),

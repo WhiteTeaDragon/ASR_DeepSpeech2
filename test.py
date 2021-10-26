@@ -16,7 +16,7 @@ from hw_asr.metric.utils import calc_cer, calc_wer
 DEFAULT_CHECKPOINT_PATH = ROOT_PATH / "default_test_model" / "checkpoint.pth"
 
 
-def main(config, out_file, beam_search):
+def main(config, out_file, beam_search, language):
     logger = config.get_logger("test")
 
     # setup data_loader instances
@@ -64,7 +64,7 @@ def main(config, out_file, beam_search):
                 pred_text_argmax = text_encoder.ctc_decode(argmax.tolist())
                 if beam_search:
                     pred_text_beam_search = text_encoder.ctc_beam_search(
-                                probs, beam_size=100
+                                probs, beam_size=100, lang=language
                             )[:10]
                 results.append(
                     {
@@ -112,6 +112,13 @@ if __name__ == "__main__":
         default=False,
         action="store_true",
         help="config using beam search",
+    )
+    args.add_argument(
+        "-l",
+        "--language",
+        default="eng",
+        type=str,
+        help="language used for beam_search"
     )
     args.add_argument(
         "-r",
@@ -199,4 +206,4 @@ if __name__ == "__main__":
     config["data"]["test"]["batch_size"] = args.batch_size
     config["data"]["test"]["num_workers"] = args.jobs
 
-    main(config, args.output, args.beam_search)
+    main(config, args.output, args.beam_search, args.language)
