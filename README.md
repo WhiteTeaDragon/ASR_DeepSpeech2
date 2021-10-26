@@ -18,7 +18,18 @@ pip install https://github.com/kpu/kenlm/archive/master.zip
 
 ## How to run ```test.py``` on pretrained models
 
+The script [load_model_checkpoints.py](load_model_checkpoints.py) loads model
+checkpoints for English and Russian language from Google Drive. The loading of
+language models for both languages is happening in 
+[ctc_char_text_encoder.py](hw_asr/text_encoder/ctc_char_text_encoder.py) in
+lines 67-68 and 77-78. An additional option was added to ```test.py```: beam
+search can be turned on by specifying ```-bs``` command line option, otherwise
+it is not executed.
 
+```shell
+python hw-asr/load_model_checkpoints.py
+
+```
 
 ## Recommended implementation order
 
