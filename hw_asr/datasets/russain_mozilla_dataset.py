@@ -14,7 +14,7 @@ class RussianMozillaDataset(CustomAudioDataset):
     def __init__(self, data_dir, part, *args, **kwargs):
         data = []
         data_dir = Path(data_dir)
-        tsv_file_path = str(data_dir / part + ".tsv")
+        tsv_file_path = str(data_dir / (part + ".tsv"))
         with open(tsv_file_path) as file:
             tsv_file = csv.reader(file, delimiter="\t")
             for line in tsv_file:
