@@ -18,7 +18,7 @@ class CustomAudioDataset(BaseDataset):
             assert Path(entry["path"]).exists()
             entry["path"] = str(Path(entry["path"]).absolute().resolve())
             entry["text"] = entry.get("text", "")
-            t_info = torchaudio.info(entry["path"], format="mp3")
+            t_info = torchaudio.info(entry["path"], encoding="mp3")
             entry["audio_len"] = t_info.num_frames / t_info.sample_rate
 
         super().__init__(index, *args, **kwargs)
