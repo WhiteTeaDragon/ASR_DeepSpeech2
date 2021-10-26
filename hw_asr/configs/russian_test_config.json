@@ -11,7 +11,7 @@
           "type": "RussianMozillaDataset",
           "args": {
             "data_dir": "cv-corpus-7.0-2021-07-21/ru",
-            "part": "test.tsv"
+            "part": "test"
           }
         }
       ]
