@@ -1,0 +1,20 @@
+{
+  "bpe": {
+    "model_path": "hw-asr/data/datasets/bpe.model"
+  },
+  "data": {
+    "test": {
+      "batch_size": 64,
+      "num_workers": 5,
+      "datasets": [
+        {
+          "type": "RussianMozillaDataset",
+          "args": {
+            "data_dir": "cv-corpus-7.0-2021-07-21/ru",
+            "part": "test.tsv"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -16,7 +16,7 @@ from hw_asr.metric.utils import calc_cer, calc_wer
 DEFAULT_CHECKPOINT_PATH = ROOT_PATH / "default_test_model" / "checkpoint.pth"
 
 
-def main(config, out_file):
+def main(config, out_file, beam_search):
     logger = config.get_logger("test")
 
     # setup data_loader instances
@@ -62,9 +62,10 @@ def main(config, out_file):
                 argmax = batch["argmax"][i][:length]
                 probs = batch["probs"][i][:length]
                 pred_text_argmax = text_encoder.ctc_decode(argmax.tolist())
-                pred_text_beam_search = text_encoder.ctc_beam_search(
-                            probs, beam_size=100
-                        )[:10]
+                if beam_search:
+                    pred_text_beam_search = text_encoder.ctc_beam_search(
+                                probs, beam_size=100
+                            )[:10]
                 results.append(
                     {
                         "ground_truth": batch["text"][i],
@@ -74,24 +75,25 @@ def main(config, out_file):
                                                pred_text_argmax),
                         "cer_argmax": calc_cer(batch["text"][i],
                                                pred_text_argmax),
-                        "wer_beam_search": calc_wer(batch["text"][i],
-                                                    pred_text_beam_search[0][0]
-                                                    ),
-                        "cer_beam_search": calc_cer(batch["text"][i],
-                                                    pred_text_beam_search[0][0]
-                                                    )
                     }
                 )
+                if beam_search:
+                    results[-1]["wer_beam_search"] = calc_wer(batch["text"][i],
+                                                pred_text_beam_search[0][0])
+                    results[-1]["cer_beam_search"] = calc_cer(batch["text"][i],
+                                                pred_text_beam_search[0][0])
                 sum_wer_argmax += results[-1]["wer_argmax"]
                 sum_cer_argmax += results[-1]["cer_argmax"]
-                sum_wer_beam_search += results[-1]["wer_beam_search"]
-                sum_cer_beam_search += results[-1]["cer_beam_search"]
+                if beam_search:
+                    sum_wer_beam_search += results[-1]["wer_beam_search"]
+                    sum_cer_beam_search += results[-1]["cer_beam_search"]
     with Path(out_file).open("w") as f:
         json.dump(results, f, indent=2)
     print(f"Final argmax. WER:{sum_wer_argmax / len(results)},"
           f"CER:{sum_cer_argmax / len(results)}")
-    print(f"Final beam_search. WER:{sum_wer_beam_search / len(results)},"
-          f"CER:{sum_cer_beam_search / len(results)}")
+    if beam_search:
+        print(f"Final beam_search. WER:{sum_wer_beam_search / len(results)},"
+              f"CER:{sum_cer_beam_search / len(results)}")
 
 
 if __name__ == "__main__":
@@ -102,6 +104,13 @@ if __name__ == "__main__":
         default=None,
         type=str,
         help="config file path (default: None)",
+    )
+    args.add_argument(
+        "-bs",
+        "--beam_search",
+        default=False,
+        action="store-true",
+        help="config using beam search",
     )
     args.add_argument(
         "-r",
@@ -189,4 +198,4 @@ if __name__ == "__main__":
     config["data"]["test"]["batch_size"] = args.batch_size
     config["data"]["test"]["num_workers"] = args.jobs
 
-    main(config, args.output)
+    main(config, args.output, args.beam_search)

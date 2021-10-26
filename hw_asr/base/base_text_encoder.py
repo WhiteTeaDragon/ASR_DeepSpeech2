@@ -23,3 +23,9 @@ class BaseTextEncoder:
         text = text.lower()
         text = re.sub(r"[^a-z ]", "", text)
         return text
+
+    @staticmethod
+    def normalize_russian_text(text: str):
+        text = text.lower()
+        text = re.sub(r"[^а-яё ]", "", text)
+        return text

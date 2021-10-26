@@ -15,7 +15,7 @@ from hw_asr.utils import ROOT_PATH
 class CTCCharTextEncoder(CharTextEncoder):
     EMPTY_TOK = "^"
 
-    def __init__(self, alphabet: List[str]):
+    def __init__(self, alphabet: List[str], language="eng"):
         super().__init__(alphabet)
         self.ind2char = {
             0: self.EMPTY_TOK
