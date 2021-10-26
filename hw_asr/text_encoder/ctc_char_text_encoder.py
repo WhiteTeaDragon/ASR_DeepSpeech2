@@ -6,6 +6,7 @@ import torch
 import shutil
 import math
 import numpy as np
+import gzip
 
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
 from hw_asr.utils import ROOT_PATH
@@ -23,6 +24,7 @@ class CTCCharTextEncoder(CharTextEncoder):
             self.ind2char[max(self.ind2char.keys()) + 1] = text
         self.char2ind = {v: k for k, v in self.ind2char.items()}
         self.file_path = None
+        self.upper_file_path = None
         data_dir = ROOT_PATH / "lm_model"
         data_dir.mkdir(exist_ok=True, parents=True)
         self._data_dir = data_dir
@@ -55,11 +57,19 @@ class CTCCharTextEncoder(CharTextEncoder):
         assert voc_size == len(self.ind2char)
         if self.file_path is None and use_lm:
             arch_path = self._data_dir / "3-gram.pruned.1e-7.arpa.gz"
+            self.upper_file_path = self._data_dir / \
+                                   "upper-3-gram.pruned.1e-7.arpa"
             self.file_path = self._data_dir / "3-gram.pruned.1e-7.arpa"
             print(f"Loading kenlm")
             download_file("http://www.openslr.org/resources/11/3-gram.pruned"
                           ".1e-7.arpa.gz", arch_path)
-            shutil.unpack_archive(arch_path, self._data_dir, "gz")
+            with gzip.open(arch_path, 'rb') as f_in:
+                with open(self.upper_file_path, 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+            with open(self.upper_file_path, "r") as f_in:
+                with open(self.file_path, "w") as f_out:
+                    for line in f_in:
+                        f_out.write(line.lower().replace("'", ""))
         if self.decoder is None and use_lm:
             self.decoder = build_ctcdecoder(self.vocab,
                                    str(self.file_path),
@@ -79,8 +89,7 @@ class CTCCharTextEncoder(CharTextEncoder):
         log_probs = np.log(np.clip(probs.detach().cpu().numpy(),
                                    1e-15, 1))
         hypos = curr_decoder.decode_beams(log_probs,
-                                          beam_size, token_min_logp=-10000,
-                                          beam_prune_logp=-10000,
+                                          beam_size,
                                           hotword_weight=0)
         for i in range(len(hypos)):
             hypos[i] = (hypos[i][0], math.exp(hypos[i][-1]))

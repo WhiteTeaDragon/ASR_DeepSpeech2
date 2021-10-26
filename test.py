@@ -75,9 +75,11 @@ def main(config, out_file):
                         "cer_argmax": calc_cer(batch["text"][i],
                                                pred_text_argmax),
                         "wer_beam_search": calc_wer(batch["text"][i],
-                                                    pred_text_beam_search[0]),
+                                                    pred_text_beam_search[0][0]
+                                                    ),
                         "cer_beam_search": calc_cer(batch["text"][i],
-                                                    pred_text_beam_search[0])
+                                                    pred_text_beam_search[0][0]
+                                                    )
                     }
                 )
                 sum_wer_argmax += results[-1]["wer_argmax"]
